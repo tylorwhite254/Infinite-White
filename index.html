@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Codex of Realms</title>
+    <title>The Infinity White</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <style>
         /* ============================================================
            ROOT VARIABLES & THEMES
@@ -535,6 +540,109 @@
 
         .book-page .page-content p {
             margin-bottom: 15px;
+        }
+
+        /* LIVE NOTES – Firebase powered */
+        .live-notes-section {
+            margin-top: 30px;
+            border-top: 2px solid var(--page-border);
+            padding-top: 20px;
+        }
+
+        .live-notes-section h4 {
+            color: var(--accent-gold);
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-notes-section .note-badge {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            border-radius: 20px;
+            padding: 0 12px;
+            font-size: 0.7rem;
+            font-family: var(--font-heading);
+        }
+
+        .note-input-row {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .note-input-row input, .note-input-row textarea {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+
+        .note-input-row input:focus, .note-input-row textarea:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .note-input-row button {
+            padding: 12px 24px;
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+        }
+
+        .note-input-row button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .note-feed {
+            max-height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 6px;
+        }
+
+        .note-item {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        .note-item .note-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .note-item .note-meta strong {
+            color: var(--accent-gold);
+            font-family: var(--font-heading);
+        }
+
+        .note-item .note-body {
+            color: var(--text-primary);
+            word-break: break-word;
         }
 
         /* Reactions */
@@ -1095,6 +1203,14 @@
                 height: 45px;
                 font-size: 20px;
             }
+
+            .note-input-row {
+                flex-direction: column;
+            }
+
+            .note-input-row input, .note-input-row textarea {
+                min-width: 100%;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1120,8 +1236,8 @@
 <!-- ============================================================ -->
 <div id="loginPage">
     <div class="login-container">
-        <h1>📖 Codex of Realms</h1>
-        <p class="subtitle">Enter the library of knowledge</p>
+        <h1>📖 The Infinity White</h1>
+        <p class="subtitle">Enter the library of infinite knowledge</p>
 
         <div class="profile-pic-upload" id="profileUpload">
             <img id="profilePreview" src="" style="display:none;">
@@ -1130,9 +1246,9 @@
         </div>
 
         <input type="text" class="login-input" id="loginUsername" placeholder="Enter your username..." maxlength="20">
-        <input type="password" class="login-input" id="loginPassword" placeholder="Create a password..." minlength="4">
+        <input type="password" class="login-input" id="loginPassword" placeholder="Create a password..." minlength="6">
 
-        <button class="login-btn" id="loginBtn">⚔️ Enter the Codex</button>
+        <button class="login-btn" id="loginBtn">⚔️ Enter The Infinity</button>
         <div class="login-error" id="loginError"></div>
     </div>
 </div>
@@ -1177,14 +1293,27 @@
 
         <!-- BOOK PAGE CONTENT -->
         <div class="book-page" id="bookPageContent">
-            <h2 class="page-title" id="pageTitle">Welcome to the Codex</h2>
+            <h2 class="page-title" id="pageTitle">Welcome to The Infinity White</h2>
             <div class="page-content" id="pageContent">
-                <p>Begin your journey through the realms of knowledge. Each page holds new wisdom.</p>
-                <img src="https://placehold.co/800x400/1a1208/c9a959?text=The+Codex+of+Realms" alt="Codex">
-                <p>The Codex of Realms is a living library where knowledge flows like the winds between sky-islands.</p>
+                <p>Begin your journey through the infinite realms of knowledge. Each page holds eternal wisdom.</p>
+                <img src="https://placehold.co/800x400/1a1208/c9a959?text=The+Infinity+White" alt="Infinity White">
+                <p>The Infinity White is a living library where knowledge flows like the winds between sky-islands.</p>
             </div>
 
-            <!-- SOCIAL MEDIA BUTTONS (Cover Page) -->
+            <!-- LIVE NOTES – Firebase powered -->
+            <div class="live-notes-section" id="liveNotesSection">
+                <h4><i class="fas fa-pen-fancy"></i> Live Notes <span class="note-badge">real‑time</span></h4>
+                <div class="note-input-row">
+                    <input type="text" id="noteTitleInput" placeholder="Note title (optional)" maxlength="60">
+                    <textarea id="noteBodyInput" placeholder="Write your note…" rows="2" maxlength="500"></textarea>
+                    <button id="publishNoteBtn"><i class="fas fa-cloud-upload-alt"></i> Publish</button>
+                </div>
+                <div class="note-feed" id="noteFeed">
+                    <p style="opacity:0.4; font-style:italic; text-align:center;">📡 Waiting for notes…</p>
+                </div>
+            </div>
+
+            <!-- SOCIAL MEDIA BUTTONS -->
             <div class="social-cover" id="socialButtons">
                 <a href="#" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
                 <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
@@ -1234,7 +1363,7 @@
     <!-- CHAT MODAL -->
     <div class="chat-modal" id="chatModal">
         <div class="chat-header">
-            <span>💬 Realm Chat</span>
+            <span>💬 Infinity Chat</span>
             <button id="chatCloseBtn"><i class="fas fa-times"></i></button>
         </div>
         <div class="chat-messages" id="chatMessages">
@@ -1273,26 +1402,43 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- JAVASCRIPT -->
+<!-- JAVASCRIPT - FIREBASE INTEGRATION -->
 <!-- ============================================================ -->
 <script>
     // ============================================================
-    // DATA STORAGE
+    // FIREBASE CONFIG - Replace with your own
     // ============================================================
-    const DATA_KEY = 'codex_of_realms_data';
+    const firebaseConfig = {
+        apiKey: "AIzaSyB4ZcH3Xk4G9x5L7m8n9p0q1r2s3t4u5v6w7x8y9z",
+        authDomain: "your-project.firebaseapp.com",
+        projectId: "your-project-id",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "123456789012",
+        appId: "1:123456789012:web:abcdef1234567890"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+
+    // ============================================================
+    // DATA STORAGE (Fallback for offline)
+    // ============================================================
+    const DATA_KEY = 'infinity_white_data';
 
     function getDefaultData() {
         return {
-            users: [],
             pages: [
                 {
                     id: 1,
-                    title: 'The Codex of Realms',
+                    title: 'The Infinity White',
                     content: `
-                        <p>Welcome to the <strong>Codex of Realms</strong> — a living library where knowledge flows like the winds between sky-islands.</p>
-                        <img src="https://placehold.co/800x400/1a1208/c9a959?text=Sky-Islands+of+Knowledge" alt="Sky-Islands">
+                        <p>Welcome to the <strong>Infinity White</strong> — a living library where infinite knowledge flows like the winds between sky-islands.</p>
+                        <img src="https://placehold.co/800x400/1a1208/c9a959?text=Infinity+White" alt="Infinity White">
                         <p>Sky-Islands are vast territories suspended in the eternal mists, where ancient dragons once roamed and scholars now gather to preserve the wisdom of ages.</p>
-                        <p>The Codex of Realms may be the greatest collection of knowledge ever assembled. Every page turns like a whisper of wind through ancient halls.</p>
+                        <p>The Infinity White may be the greatest collection of knowledge ever assembled. Every page turns like a whisper of wind through ancient halls.</p>
                         <img src="https://placehold.co/800x400/1a1208/c9a959?text=Dragon+Scrolls" alt="Dragon Scrolls">
                         <p>"After dragons, who dragon't in thawa for monte." — <em>Naruto</em></p>
                         <p>Continue your journey through these pages. Each chapter reveals new truths hidden within the mists of time.</p>
@@ -1319,24 +1465,16 @@
                         <p>For something that exists, the power in existence and the multitudes of the mountains/islands continue to reveal themselves to those who seek truth.</p>
                         <p>The foundations of grace are built upon knowledge. Notes and ancient texts line the walls of this sanctuary, waiting for those brave enough to read.</p>
                         <img src="https://placehold.co/800x400/1a1208/c9a959?text=Ancient+Scrolls" alt="Ancient Scrolls">
-                        <p>Continue your quest for knowledge. The Codex holds many more secrets within its pages.</p>
+                        <p>Continue your quest for knowledge. The Infinity White holds many more secrets within its pages.</p>
                     `
                 }
             ],
-            comments: {},
-            likes: {},
-            dislikes: {},
-            chatMessages: [],
-            bugReports: [],
-            suggestions: [],
-            collaborators: [],
-            currentPage: 1,
-            audioPlaying: true,
-            theme: 'default'
+            theme: 'default',
+            audioPlaying: true
         };
     }
 
-    function loadData() {
+    function loadLocalData() {
         const raw = localStorage.getItem(DATA_KEY);
         if (!raw) {
             const data = getDefaultData();
@@ -1346,7 +1484,7 @@
         return JSON.parse(raw);
     }
 
-    function saveData(data) {
+    function saveLocalData(data) {
         localStorage.setItem(DATA_KEY, JSON.stringify(data));
     }
 
@@ -1355,9 +1493,10 @@
     // ============================================================
     let currentUser = null;
     let currentPageIndex = 0;
+    let currentUserProfilePic = '';
 
     // ============================================================
-    // LOGIN SYSTEM
+    // LOGIN SYSTEM (Firebase Auth)
     // ============================================================
     const loginPage = document.getElementById('loginPage');
     const bookPage = document.getElementById('bookPage');
@@ -1385,7 +1524,7 @@
         }
     });
 
-    loginBtn.addEventListener('click', function() {
+    loginBtn.addEventListener('click', async function() {
         const username = loginUsername.value.trim();
         const password = loginPassword.value.trim();
 
@@ -1399,61 +1538,111 @@
             return;
         }
 
-        if (password.length < 4) {
-            loginError.textContent = 'Password must be at least 4 characters.';
+        if (password.length < 6) {
+            loginError.textContent = 'Password must be at least 6 characters.';
             return;
         }
 
-        const data = loadData();
-        let user = data.users.find(u => u.username === username);
+        try {
+            // Check if user exists in Firestore
+            const usersRef = db.collection('users');
+            const userQuery = await usersRef.where('username', '==', username).get();
 
-        if (user) {
-            if (user.password !== password) {
-                loginError.textContent = 'Wrong password!';
-                return;
+            let userData = null;
+            let existingUser = false;
+
+            if (!userQuery.empty) {
+                // User exists - verify password (stored in Firestore)
+                userData = userQuery.docs[0].data();
+                if (userData.password !== password) {
+                    loginError.textContent = 'Wrong password!';
+                    return;
+                }
+                existingUser = true;
+            } else {
+                // Create new user
+                const profilePic = tempProfilePic || `https://placehold.co/100x100/1a1208/c9a959?text=${username.charAt(0).toUpperCase()}`;
+                
+                // Upload profile pic to Firebase Storage if provided
+                let profilePicUrl = profilePic;
+                if (tempProfilePic && tempProfilePic.startsWith('data:image')) {
+                    try {
+                        const response = await fetch(tempProfilePic);
+                        const blob = await response.blob();
+                        const storageRef = storage.ref().child(`profile_pics/${username}_${Date.now()}.jpg`);
+                        await storageRef.put(blob);
+                        profilePicUrl = await storageRef.getDownloadURL();
+                    } catch (storageError) {
+                        console.warn('Storage upload failed, using base64:', storageError);
+                    }
+                }
+
+                userData = {
+                    username: username,
+                    password: password,
+                    profilePic: profilePicUrl,
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await usersRef.add(userData);
+                existingUser = false;
             }
-        } else {
-            const profilePic = tempProfilePic || 'https://placehold.co/100x100/1a1208/c9a959?text=' + username.charAt(0).toUpperCase();
-            user = {
-                username: username,
-                password: password,
-                profilePic: profilePic,
-                joinedAt: new Date().toISOString()
+
+            currentUser = {
+                username: userData.username,
+                profilePic: userData.profilePic
             };
-            data.users.push(user);
-            saveData(data);
-        }
+            currentUserProfilePic = userData.profilePic;
 
-        currentUser = user;
-        loginPage.style.display = 'none';
-        bookPage.style.display = 'block';
+            // Save to localStorage for offline fallback
+            const localData = loadLocalData();
+            // Store user in local data
+            let localUsers = JSON.parse(localStorage.getItem('infinity_users') || '[]');
+            const existingLocalUser = localUsers.find(u => u.username === username);
+            if (!existingLocalUser) {
+                localUsers.push({
+                    username: username,
+                    password: password,
+                    profilePic: userData.profilePic,
+                    joinedAt: new Date().toISOString()
+                });
+                localStorage.setItem('infinity_users', JSON.stringify(localUsers));
+            }
 
-        document.getElementById('userAvatar').src = user.profilePic;
-        document.getElementById('userNameDisplay').textContent = user.username;
+            // Enter the book
+            loginPage.style.display = 'none';
+            bookPage.style.display = 'block';
 
-        currentPageIndex = 0;
-        renderPage();
-        loadComments();
-        loadReactions();
-        loadChat();
+            document.getElementById('userAvatar').src = userData.profilePic;
+            document.getElementById('userNameDisplay').textContent = username;
 
-        if (data.audioPlaying !== false) {
-            document.getElementById('bgAudio').play();
+            currentPageIndex = 0;
+            renderPage();
+            loadComments();
+            loadReactions();
+            loadChat();
+            subscribeToNotes();
+            loadNotes();
+
+            if (localData.audioPlaying !== false) {
+                document.getElementById('bgAudio').play();
+            }
+
+        } catch (error) {
+            console.error('Login error:', error);
+            loginError.textContent = 'Error connecting to server. Please try again.';
         }
     });
-
-    loginUsername.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginBtn.click(); });
-    loginPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginBtn.click(); });
 
     // ============================================================
     // BOOK RENDERING
     // ============================================================
     function renderPage() {
-        const data = loadData();
+        const data = loadLocalData();
         const pages = data.pages;
 
         if (pages.length === 0) {
-            document.getElementById('pageTitle').textContent = '📖 Empty Codex';
+            document.getElementById('pageTitle').textContent = '📖 Empty Infinity';
             document.getElementById('pageContent').innerHTML = '<p>No pages yet. The Admin is preparing the scrolls...</p>';
             document.getElementById('pageIndicator').textContent = 'Page 0 of 0';
             document.getElementById('prevPageBtn').disabled = true;
@@ -1472,7 +1661,6 @@
         document.getElementById('prevPageBtn').disabled = currentPageIndex === 0;
         document.getElementById('nextPageBtn').disabled = currentPageIndex === pages.length - 1;
 
-        // Show social buttons only on first page
         const socialBtns = document.getElementById('socialButtons');
         if (currentPageIndex === 0) {
             socialBtns.style.display = 'flex';
@@ -1509,9 +1697,7 @@
                 osc2.start(audioCtx.currentTime);
                 osc2.stop(audioCtx.currentTime + 0.1);
             }, 80);
-        } catch (e) {
-            // Silently fail if audio context not supported
-        }
+        } catch (e) {}
     }
 
     document.getElementById('prevPageBtn').addEventListener('click', function() {
@@ -1523,7 +1709,7 @@
     });
 
     document.getElementById('nextPageBtn').addEventListener('click', function() {
-        const data = loadData();
+        const data = loadLocalData();
         if (currentPageIndex < data.pages.length - 1) {
             currentPageIndex++;
             playPageTurnSound();
@@ -1548,9 +1734,9 @@
             audioIcon.className = 'fas fa-volume-up';
             audioPlaying = true;
         }
-        const data = loadData();
+        const data = loadLocalData();
         data.audioPlaying = audioPlaying;
-        saveData(data);
+        saveLocalData(data);
     });
 
     // ============================================================
@@ -1560,16 +1746,13 @@
         btn.addEventListener('click', function() {
             const theme = this.getAttribute('data-theme');
             document.documentElement.setAttribute('data-theme', theme);
-            const data = loadData();
+            const data = loadLocalData();
             data.theme = theme;
-            saveData(data);
+            saveLocalData(data);
             document.getElementById('settingsMenu').classList.remove('open');
         });
     });
 
-    // ============================================================
-    // SETTINGS DROPDOWN
-    // ============================================================
     document.getElementById('settingsToggle').addEventListener('click', function(e) {
         e.stopPropagation();
         document.getElementById('settingsMenu').classList.toggle('open');
@@ -1580,29 +1763,43 @@
     });
 
     // ============================================================
-    // COMMENTS
+    // COMMENTS (Firebase)
     // ============================================================
-    function loadComments() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-        const comments = data.comments[pageId] || [];
-        const container = document.getElementById('commentsContainer');
+    async function loadComments() {
+        try {
+            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
+            const commentsRef = db.collection('comments');
+            const snapshot = await commentsRef
+                .where('pageId', '==', pageId)
+                .orderBy('timestamp', 'desc')
+                .limit(50)
+                .get();
 
-        if (comments.length === 0) {
-            container.innerHTML = '<p style="opacity:0.4; font-style:italic;">No comments yet. Share your wisdom...</p>';
-            return;
+            const comments = [];
+            snapshot.forEach(doc => {
+                comments.push({ id: doc.id, ...doc.data() });
+            });
+
+            const container = document.getElementById('commentsContainer');
+
+            if (comments.length === 0) {
+                container.innerHTML = '<p style="opacity:0.4; font-style:italic;">No comments yet. Share your wisdom...</p>';
+                return;
+            }
+
+            container.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <span class="comment-user">${escapeHtml(c.username)}</span>
+                    <span class="comment-time">${new Date(c.timestamp?.toDate?.() || c.timestamp).toLocaleString()}</span>
+                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.warn('Error loading comments:', error);
         }
-
-        container.innerHTML = comments.map(c => `
-            <div class="comment-item">
-                <span class="comment-user">${escapeHtml(c.username)}</span>
-                <span class="comment-time">${new Date(c.timestamp).toLocaleString()}</span>
-                <div class="comment-text">${escapeHtml(c.text)}</div>
-            </div>
-        `).join('');
     }
 
-    document.getElementById('commentBtn').addEventListener('click', function() {
+    document.getElementById('commentBtn').addEventListener('click', async function() {
         const input = document.getElementById('commentInput');
         const text = input.value.trim();
 
@@ -1612,20 +1809,21 @@
             return;
         }
 
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
+        try {
+            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
+            await db.collection('comments').add({
+                username: currentUser.username,
+                text: text,
+                pageId: pageId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-        if (!data.comments[pageId]) data.comments[pageId] = [];
-
-        data.comments[pageId].push({
-            username: currentUser.username,
-            text: text,
-            timestamp: Date.now()
-        });
-
-        saveData(data);
-        input.value = '';
-        loadComments();
+            input.value = '';
+            loadComments();
+        } catch (error) {
+            console.error('Error posting comment:', error);
+            alert('Failed to post comment. Please try again.');
+        }
     });
 
     document.getElementById('commentInput').addEventListener('keypress', function(e) {
@@ -1633,34 +1831,70 @@
     });
 
     // ============================================================
-    // LIKES / DISLIKES
+    // LIKES / DISLIKES (Firebase)
     // ============================================================
-    function loadReactions() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
+    async function loadReactions() {
+        try {
+            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
+            const reactionsRef = db.collection('reactions');
+            const snapshot = await reactionsRef
+                .where('pageId', '==', pageId)
+                .get();
 
-        document.getElementById('likeCount').textContent = data.likes[pageId] || 0;
-        document.getElementById('dislikeCount').textContent = data.dislikes[pageId] || 0;
+            let likes = 0, dislikes = 0;
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.type === 'like') likes++;
+                if (data.type === 'dislike') dislikes++;
+            });
+
+            document.getElementById('likeCount').textContent = likes;
+            document.getElementById('dislikeCount').textContent = dislikes;
+        } catch (error) {
+            console.warn('Error loading reactions:', error);
+        }
     }
 
-    document.getElementById('likeBtn').addEventListener('click', function() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-        data.likes[pageId] = (data.likes[pageId] || 0) + 1;
-        saveData(data);
-        loadReactions();
+    document.getElementById('likeBtn').addEventListener('click', async function() {
+        if (!currentUser) {
+            alert('Please login first.');
+            return;
+        }
+        try {
+            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
+            await db.collection('reactions').add({
+                username: currentUser.username,
+                type: 'like',
+                pageId: pageId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            loadReactions();
+        } catch (error) {
+            console.error('Error liking:', error);
+        }
     });
 
-    document.getElementById('dislikeBtn').addEventListener('click', function() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-        data.dislikes[pageId] = (data.dislikes[pageId] || 0) + 1;
-        saveData(data);
-        loadReactions();
+    document.getElementById('dislikeBtn').addEventListener('click', async function() {
+        if (!currentUser) {
+            alert('Please login first.');
+            return;
+        }
+        try {
+            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
+            await db.collection('reactions').add({
+                username: currentUser.username,
+                type: 'dislike',
+                pageId: pageId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            loadReactions();
+        } catch (error) {
+            console.error('Error disliking:', error);
+        }
     });
 
     // ============================================================
-    // CHAT
+    // CHAT (Firebase)
     // ============================================================
     const chatModal = document.getElementById('chatModal');
 
@@ -1672,28 +1906,42 @@
         chatModal.classList.remove('open');
     });
 
-    function loadChat() {
-        const data = loadData();
-        const messages = data.chatMessages || [];
-        const container = document.getElementById('chatMessages');
+    async function loadChat() {
+        try {
+            const chatRef = db.collection('chat');
+            const snapshot = await chatRef
+                .orderBy('timestamp', 'desc')
+                .limit(50)
+                .get();
 
-        if (messages.length === 0) {
-            container.innerHTML = '<p style="opacity:0.4; text-align:center; padding:20px;">No messages yet. Start the conversation!</p>';
-            return;
+            const messages = [];
+            snapshot.forEach(doc => {
+                messages.push({ id: doc.id, ...doc.data() });
+            });
+            messages.reverse();
+
+            const container = document.getElementById('chatMessages');
+
+            if (messages.length === 0) {
+                container.innerHTML = '<p style="opacity:0.4; text-align:center; padding:20px;">No messages yet. Start the conversation!</p>';
+                return;
+            }
+
+            container.innerHTML = messages.map(m => `
+                <div class="chat-message">
+                    <div class="sender">${escapeHtml(m.username)}</div>
+                    <div class="msg">${escapeHtml(m.text)}</div>
+                    <span class="time">${new Date(m.timestamp?.toDate?.() || m.timestamp).toLocaleTimeString()}</span>
+                </div>
+            `).join('');
+
+            container.scrollTop = container.scrollHeight;
+        } catch (error) {
+            console.warn('Error loading chat:', error);
         }
-
-        container.innerHTML = messages.slice(-50).map(m => `
-            <div class="chat-message">
-                <div class="sender">${escapeHtml(m.username)}</div>
-                <div class="msg">${escapeHtml(m.text)}</div>
-                <span class="time">${new Date(m.timestamp).toLocaleTimeString()}</span>
-            </div>
-        `).join('');
-
-        container.scrollTop = container.scrollHeight;
     }
 
-    document.getElementById('chatSendBtn').addEventListener('click', function() {
+    document.getElementById('chatSendBtn').addEventListener('click', async function() {
         const input = document.getElementById('chatInput');
         const text = input.value.trim();
 
@@ -1703,18 +1951,17 @@
             return;
         }
 
-        const data = loadData();
-        if (!data.chatMessages) data.chatMessages = [];
-
-        data.chatMessages.push({
-            username: currentUser.username,
-            text: text,
-            timestamp: Date.now()
-        });
-
-        saveData(data);
-        input.value = '';
-        loadChat();
+        try {
+            await db.collection('chat').add({
+                username: currentUser.username,
+                text: text,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            input.value = '';
+            loadChat();
+        } catch (error) {
+            console.error('Error sending chat:', error);
+        }
     });
 
     document.getElementById('chatInput').addEventListener('keypress', function(e) {
@@ -1722,7 +1969,99 @@
     });
 
     // ============================================================
-    // QUOTES (Anime & Inspirational)
+    // LIVE NOTES (Firebase)
+    // ============================================================
+    let notesUnsubscribe = null;
+
+    async function loadNotes() {
+        try {
+            const notesRef = db.collection('notes');
+            const snapshot = await notesRef
+                .orderBy('timestamp', 'desc')
+                .limit(50)
+                .get();
+
+            const notes = [];
+            snapshot.forEach(doc => {
+                notes.push({ id: doc.id, ...doc.data() });
+            });
+
+            renderNoteFeed(notes);
+        } catch (error) {
+            console.warn('Error loading notes:', error);
+        }
+    }
+
+    function renderNoteFeed(notes) {
+        const feed = document.getElementById('noteFeed');
+        if (!notes || notes.length === 0) {
+            feed.innerHTML = '<p style="opacity:0.4; font-style:italic; text-align:center;">📡 No notes yet. Be the first!</p>';
+            return;
+        }
+
+        feed.innerHTML = notes.map(n => `
+            <div class="note-item">
+                <div class="note-meta"><strong>${escapeHtml(n.username || 'Anonymous')}</strong> <span>${new Date(n.timestamp?.toDate?.() || n.timestamp).toLocaleString()}</span></div>
+                ${n.title ? `<div style="font-weight:bold; color:var(--accent-gold);">${escapeHtml(n.title)}</div>` : ''}
+                <div class="note-body">${escapeHtml(n.body)}</div>
+            </div>
+        `).join('');
+    }
+
+    function subscribeToNotes() {
+        // Unsubscribe from previous listener
+        if (notesUnsubscribe) {
+            notesUnsubscribe();
+        }
+
+        const notesRef = db.collection('notes');
+        notesUnsubscribe = notesRef
+            .orderBy('timestamp', 'desc')
+            .limit(50)
+            .onSnapshot((snapshot) => {
+                const notes = [];
+                snapshot.forEach(doc => {
+                    notes.push({ id: doc.id, ...doc.data() });
+                });
+                renderNoteFeed(notes);
+            }, (error) => {
+                console.warn('Notes subscription error:', error);
+            });
+    }
+
+    document.getElementById('publishNoteBtn').addEventListener('click', async function() {
+        const title = document.getElementById('noteTitleInput').value.trim();
+        const body = document.getElementById('noteBodyInput').value.trim();
+
+        if (!body) {
+            alert('Please write a note.');
+            return;
+        }
+
+        if (!currentUser) {
+            alert('Please login first.');
+            return;
+        }
+
+        try {
+            await db.collection('notes').add({
+                username: currentUser.username,
+                title: title || null,
+                body: body,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            document.getElementById('noteTitleInput').value = '';
+            document.getElementById('noteBodyInput').value = '';
+            // Note will appear via real-time subscription
+        } catch (error) {
+            console.error('Error publishing note:', error);
+            alert('Failed to publish note. Please try again.');
+        }
+    });
+
+    // ============================================================
+    // QUOTES
     // ============================================================
     const quotes = [
         { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
@@ -1756,7 +2095,7 @@
     }
 
     updateQuote();
-    setInterval(updateQuote, 600000); // 10 minutes
+    setInterval(updateQuote, 600000);
 
     // ============================================================
     // BUG REPORT
@@ -1766,7 +2105,7 @@
         document.getElementById('bugDescription').value = '';
     }
 
-    function submitBug() {
+    async function submitBug() {
         const description = document.getElementById('bugDescription').value.trim();
         if (!description) {
             alert('Please describe the bug.');
@@ -1778,19 +2117,19 @@
             return;
         }
 
-        const data = loadData();
-        if (!data.bugReports) data.bugReports = [];
-
-        data.bugReports.push({
-            username: currentUser.username,
-            description: description,
-            timestamp: Date.now(),
-            page: data.pages[currentPageIndex]?.title || 'Unknown'
-        });
-
-        saveData(data);
-        alert('✅ Bug reported! Thank you for helping improve the Codex.');
-        closeBugModal();
+        try {
+            await db.collection('bugReports').add({
+                username: currentUser.username,
+                description: description,
+                page: loadLocalData().pages[currentPageIndex]?.title || 'Unknown',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert('✅ Bug reported! Thank you for helping improve The Infinity White.');
+            closeBugModal();
+        } catch (error) {
+            console.error('Error reporting bug:', error);
+            alert('Failed to report bug. Please try again.');
+        }
     }
 
     document.getElementById('bugReportBtn').addEventListener('click', function() {
@@ -1809,22 +2148,36 @@
         document.getElementById('deleteModal').classList.remove('open');
     });
 
-    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
         if (!currentUser) return;
 
-        const data = loadData();
-        data.users = data.users.filter(u => u.username !== currentUser.username);
-        saveData(data);
+        try {
+            // Delete user from Firestore
+            const usersRef = db.collection('users');
+            const snapshot = await usersRef.where('username', '==', currentUser.username).get();
+            
+            snapshot.forEach(async (doc) => {
+                await doc.ref.delete();
+            });
 
-        document.getElementById('deleteModal').classList.remove('open');
-        alert('👋 Goodbye friend! We\'ll miss you.');
+            // Remove from local storage
+            let localUsers = JSON.parse(localStorage.getItem('infinity_users') || '[]');
+            localUsers = localUsers.filter(u => u.username !== currentUser.username);
+            localStorage.setItem('infinity_users', JSON.stringify(localUsers));
 
-        currentUser = null;
-        bookPage.style.display = 'none';
-        loginPage.style.display = 'flex';
-        loginUsername.value = '';
-        loginPassword.value = '';
-        document.getElementById('loginError').textContent = '';
+            document.getElementById('deleteModal').classList.remove('open');
+            alert('👋 Goodbye friend! We\'ll miss you.');
+
+            currentUser = null;
+            bookPage.style.display = 'none';
+            loginPage.style.display = 'flex';
+            loginUsername.value = '';
+            loginPassword.value = '';
+            document.getElementById('loginError').textContent = '';
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            alert('Failed to delete account. Please try again.');
+        }
     });
 
     // ============================================================
@@ -1841,15 +2194,15 @@
     // RESTORE THEME ON LOAD
     // ============================================================
     (function() {
-        const data = loadData();
+        const data = loadLocalData();
         if (data.theme && data.theme !== 'default') {
             document.documentElement.setAttribute('data-theme', data.theme);
         }
     })();
 
-    console.log('📖 Codex of Realms loaded successfully!');
+    console.log('📖 The Infinity White loaded successfully!');
     console.log('👤 Create an account to begin your journey.');
-    console.log('🔧 Admin: Use admin.html to manage content.');
+    console.log('🔥 Powered by Firebase for real-time collaboration.');
 </script>
 </body>
 </html>

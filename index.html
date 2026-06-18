@@ -3,56 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📖 Tylor's Digital Library</title>
+    <title>The Codex of Realms</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        /* ========== THEMES ========== */
+        /* ============================================================
+           ROOT VARIABLES & THEMES
+           ============================================================ */
         :root {
-            --bg: #1a1a2e;
-            --text: #e0e0e0;
-            --border: #2a2a4a;
-            --card: #16213e;
-            --accent: #c9a959;
-            --shadow: rgba(0,0,0,0.5);
-            --page-bg: #2a1f0f;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #14141e;
+            --bg-card: #1a1a2e;
+            --text-primary: #e8e0d0;
+            --text-secondary: #b8b0a0;
+            --accent-gold: #c9a959;
+            --accent-glow: rgba(201, 169, 89, 0.3);
+            --border-color: #2a2a4a;
+            --page-bg: #1a1208;
             --page-text: #f5e6c8;
             --page-border: #5a3f1f;
+            --shadow-color: rgba(0,0,0,0.6);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Cormorant Garamond', serif;
+            --transition-speed: 0.4s;
         }
 
+        /* Gold Theme */
         [data-theme="gold"] {
-            --bg: #1a1208;
-            --text: #f5e6c8;
-            --border: #c9a959;
-            --card: #2a1f0f;
-            --accent: #d4af37;
-            --page-bg: #3a2a15;
+            --bg-primary: #1a1208;
+            --bg-secondary: #2a1f0f;
+            --bg-card: #3a2a15;
+            --text-primary: #f5e6c8;
+            --text-secondary: #d4c4a0;
+            --accent-gold: #d4af37;
+            --border-color: #c9a959;
+            --page-bg: #2a1f0f;
             --page-text: #f5e6c8;
-            --page-border: #c9a959;
+            --page-border: #d4af37;
         }
 
+        /* Neon Theme */
         [data-theme="neon"] {
-            --bg: #0a0a1a;
-            --text: #00ffcc;
-            --border: #00ff88;
-            --card: #0a1a1a;
-            --accent: #ff00ff;
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #0a1a1a;
+            --bg-card: #0d1f1f;
+            --text-primary: #00ffcc;
+            --text-secondary: #66ffdd;
+            --accent-gold: #ff00ff;
+            --border-color: #00ff88;
             --page-bg: #0a1a1a;
             --page-text: #00ffcc;
             --page-border: #ff00ff;
         }
 
+        /* Green Hacker Theme */
         [data-theme="hacker"] {
-            --bg: #000000;
-            --text: #00ff41;
-            --border: #00ff41;
-            --card: #0a0a0a;
-            --accent: #00ff41;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #0f0f0f;
+            --text-primary: #00ff41;
+            --text-secondary: #88ff88;
+            --accent-gold: #00ff41;
+            --border-color: #00ff41;
             --page-bg: #0a0a0a;
             --page-text: #00ff41;
             --page-border: #00ff41;
-            font-family: 'Courier New', monospace;
+            --font-body: 'Courier New', monospace;
+            --font-heading: 'Courier New', monospace;
         }
 
+        /* ============================================================
+           GLOBAL STYLES
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -60,60 +82,109 @@
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
             min-height: 100vh;
-            transition: all 0.3s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all var(--transition-speed) ease;
+            overflow-x: hidden;
         }
 
-        /* ========== LOGIN PAGE ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 10px;
+        }
+
+        /* ============================================================
+           LOGIN PAGE
+           ============================================================ */
         #loginPage {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: var(--bg);
+            background: var(--bg-primary);
             padding: 20px;
+            background-image: radial-gradient(ellipse at 30% 20%, rgba(201,169,89,0.05) 0%, transparent 70%);
         }
 
         .login-container {
-            background: var(--card);
-            border: 2px solid var(--border);
+            background: var(--bg-card);
+            border: 2px solid var(--accent-gold);
             border-radius: 30px;
             padding: 50px 40px;
             max-width: 450px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 60px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-gold), transparent, var(--accent-gold), transparent);
+            background-size: 400% 400%;
+            animation: borderGlow 6s ease infinite;
+            border-radius: 32px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .login-container h1 {
-            font-size: 2.5rem;
-            color: var(--accent);
-            margin-bottom: 10px;
-            font-family: 'Georgia', serif;
+            font-family: var(--font-heading);
+            font-size: 2.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 30px var(--accent-glow);
         }
 
-        .login-container p {
-            color: var(--text);
-            opacity: 0.7;
+        .login-container .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
             margin-bottom: 30px;
+            font-style: italic;
+            letter-spacing: 2px;
         }
 
         .profile-pic-upload {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: var(--border);
+            background: var(--bg-primary);
             margin: 0 auto 25px;
             overflow: hidden;
-            border: 4px solid var(--accent);
+            border: 4px solid var(--accent-gold);
             cursor: pointer;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: 0.3s;
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .profile-pic-upload:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 60px var(--accent-glow);
         }
 
         .profile-pic-upload img {
@@ -123,9 +194,10 @@
         }
 
         .profile-pic-upload .placeholder {
-            color: var(--text);
+            color: var(--text-secondary);
             font-size: 40px;
             opacity: 0.5;
+            font-family: var(--font-heading);
         }
 
         .profile-pic-upload input {
@@ -139,36 +211,40 @@
         .login-input {
             width: 100%;
             padding: 14px 20px;
-            background: var(--bg);
-            border: 2px solid var(--border);
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
             border-radius: 15px;
-            color: var(--text);
+            color: var(--text-primary);
             font-size: 1rem;
             margin-bottom: 15px;
             outline: none;
             transition: 0.3s;
+            font-family: var(--font-body);
         }
 
         .login-input:focus {
-            border-color: var(--accent);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
         .login-btn {
             width: 100%;
             padding: 14px;
-            background: var(--accent);
-            color: var(--bg);
+            background: var(--accent-gold);
+            color: var(--bg-primary);
             border: none;
             border-radius: 15px;
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            font-family: var(--font-heading);
+            letter-spacing: 2px;
         }
 
         .login-btn:hover {
             transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(201, 169, 89, 0.3);
+            box-shadow: 0 0 40px var(--accent-glow);
         }
 
         .login-error {
@@ -177,7 +253,9 @@
             font-size: 0.9rem;
         }
 
-        /* ========== MAIN BOOK ========== */
+        /* ============================================================
+           BOOK PAGE
+           ============================================================ */
         #bookPage {
             display: none;
             min-height: 100vh;
@@ -188,12 +266,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
-            background: var(--card);
-            border-bottom: 2px solid var(--border);
+            padding: 12px 30px;
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--accent-gold);
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .user-info {
@@ -206,34 +285,39 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            border: 2px solid var(--accent);
+            border: 2px solid var(--accent-gold);
             object-fit: cover;
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
         .username-display {
             font-weight: bold;
-            color: var(--accent);
+            color: var(--accent-gold);
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
         }
 
         .top-actions {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .top-actions button {
             background: none;
             border: none;
-            color: var(--text);
-            font-size: 1.2rem;
+            color: var(--text-primary);
+            font-size: 1.1rem;
             cursor: pointer;
             padding: 8px 12px;
             border-radius: 10px;
             transition: 0.3s;
+            font-family: var(--font-body);
         }
 
         .top-actions button:hover {
-            background: var(--border);
+            background: var(--border-color);
+            color: var(--accent-gold);
         }
 
         /* Settings Dropdown */
@@ -247,109 +331,299 @@
             position: absolute;
             right: 0;
             top: 45px;
-            background: var(--card);
-            border: 2px solid var(--border);
+            background: var(--bg-card);
+            border: 2px solid var(--accent-gold);
             border-radius: 15px;
-            min-width: 200px;
+            min-width: 220px;
             padding: 10px 0;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px var(--shadow-color);
             z-index: 200;
+            backdrop-filter: blur(10px);
         }
 
         .settings-menu.open {
             display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .settings-menu .menu-label {
+            padding: 8px 20px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            opacity: 0.5;
+            letter-spacing: 2px;
         }
 
         .settings-menu button {
             display: block;
             width: 100%;
-            padding: 12px 20px;
+            padding: 10px 20px;
             background: none;
             border: none;
-            color: var(--text);
+            color: var(--text-primary);
             text-align: left;
             cursor: pointer;
             transition: 0.3s;
             font-size: 0.95rem;
+            font-family: var(--font-body);
         }
 
         .settings-menu button:hover {
-            background: var(--border);
-            color: var(--accent);
+            background: var(--border-color);
+            color: var(--accent-gold);
         }
 
-        /* ========== BOOK LAYOUT ========== */
-        .book-container {
-            max-width: 1000px;
+        .settings-menu .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-menu .theme-option .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-menu hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 8px 15px;
+            opacity: 0.3;
+        }
+
+        .settings-menu .delete-account-btn {
+            color: #ff4444;
+        }
+
+        .settings-menu .delete-account-btn:hover {
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        /* ============================================================
+           BOOK CONTAINER
+           ============================================================ */
+        .book-wrapper {
+            max-width: 1100px;
             margin: 0 auto;
             padding: 30px 20px;
             position: relative;
         }
 
-        .book-page {
-            background: var(--page-bg);
-            border: 3px solid var(--page-border);
-            border-radius: 20px;
-            padding: 40px 45px;
-            min-height: 500px;
-            position: relative;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-        }
-
-        .book-page h2 {
-            color: var(--accent);
-            font-size: 2rem;
-            margin-bottom: 20px;
-            font-family: 'Georgia', serif;
-        }
-
-        .book-page .content {
-            color: var(--page-text);
-            line-height: 1.8;
-            font-size: 1.05rem;
-        }
-
-        .book-page .content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            margin: 15px 0;
-            opacity: 0.75;
-            transition: 0.3s;
-            display: block;
-        }
-
-        .book-page .content img:hover {
-            opacity: 1;
-        }
-
-        /* Audio Player */
-        .audio-control {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--card);
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+        /* Quote Bar */
+        .quote-bar {
+            text-align: center;
+            padding: 15px 20px;
+            background: var(--bg-card);
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent-gold);
+            border-right: 4px solid var(--accent-gold);
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-style: italic;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            font-family: var(--font-body);
+        }
+
+        .quote-bar .quote-text {
+            color: var(--text-secondary);
+        }
+
+        .quote-bar .quote-author {
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        /* Book Page */
+        .book-page {
+            background: var(--page-bg);
+            border: 3px solid var(--page-border);
+            border-radius: 25px;
+            padding: 45px 50px;
+            min-height: 450px;
+            position: relative;
+            box-shadow: 0 10px 50px var(--shadow-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .book-page::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid var(--page-border);
+            border-radius: 18px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .book-page .page-title {
+            font-family: var(--font-heading);
+            color: var(--accent-gold);
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--page-border);
+            padding-bottom: 15px;
+            text-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .book-page .page-content {
+            color: var(--page-text);
+            line-height: 1.9;
+            font-size: 1.1rem;
+        }
+
+        .book-page .page-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin: 20px 0;
+            opacity: 0.7;
+            transition: 0.4s;
+            display: block;
+            box-shadow: 0 4px 20px var(--shadow-color);
+        }
+
+        .book-page .page-content img:hover {
+            opacity: 1;
+            transform: scale(1.01);
+        }
+
+        .book-page .page-content p {
+            margin-bottom: 15px;
+        }
+
+        /* Reactions */
+        .reaction-bar {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            margin: 25px 0 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--page-border);
+        }
+
+        .reaction-bar button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
             cursor: pointer;
-            z-index: 50;
+            padding: 8px 18px;
+            border-radius: 20px;
             transition: 0.3s;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-body);
         }
 
-        .audio-control:hover {
-            transform: scale(1.1);
+        .reaction-bar button:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
         }
 
-        .audio-control i {
-            font-size: 26px;
-            color: var(--accent);
+        .reaction-bar .liked {
+            color: #4CAF50;
+        }
+
+        .reaction-bar .disliked {
+            color: #ff4444;
+        }
+
+        /* Comments */
+        .comments-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid var(--page-border);
+        }
+
+        .comments-section h4 {
+            color: var(--accent-gold);
+            font-family: var(--font-heading);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .comment-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .comment-box input {
+            flex: 1;
+            padding: 12px 18px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+
+        .comment-box input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .comment-box button {
+            padding: 12px 24px;
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+        }
+
+        .comment-box button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .comment-item {
+            background: var(--bg-primary);
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent-gold);
+        }
+
+        .comment-item .comment-user {
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-family: var(--font-heading);
+        }
+
+        .comment-item .comment-time {
+            opacity: 0.4;
+            font-size: 0.75rem;
+            margin-left: 10px;
+        }
+
+        .comment-item .comment-text {
+            margin-top: 5px;
+            color: var(--text-secondary);
         }
 
         /* Page Navigation */
@@ -362,11 +636,11 @@
         }
 
         .page-nav button {
-            padding: 12px 30px;
-            background: var(--accent);
-            color: var(--bg);
+            padding: 14px 35px;
+            background: var(--accent-gold);
+            color: var(--bg-primary);
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
@@ -374,299 +648,339 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
         }
 
-        .page-nav button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(201, 169, 89, 0.3);
+        .page-nav button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--accent-glow);
         }
 
         .page-nav button:disabled {
-            opacity: 0.4;
+            opacity: 0.3;
             cursor: not-allowed;
             transform: none;
         }
 
         .page-indicator {
-            color: var(--text);
+            color: var(--text-secondary);
             font-size: 0.9rem;
-            opacity: 0.7;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
         }
 
-        /* ========== COMMENTS ========== */
-        .comments-section {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid var(--border);
-        }
-
-        .comments-section h4 {
-            color: var(--accent);
-            margin-bottom: 15px;
-        }
-
-        .comment-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .comment-box input {
-            flex: 1;
-            padding: 12px 18px;
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            outline: none;
-        }
-
-        .comment-box input:focus {
-            border-color: var(--accent);
-        }
-
-        .comment-box button {
-            padding: 12px 24px;
-            background: var(--accent);
-            color: var(--bg);
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .comment-item {
-            background: var(--bg);
-            padding: 12px 18px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border-left: 3px solid var(--accent);
-        }
-
-        .comment-item strong {
-            color: var(--accent);
-        }
-
-        .comment-item small {
-            opacity: 0.5;
-            font-size: 0.75rem;
-        }
-
-        /* ========== LIKE/DISLIKE ========== */
-        .reaction-bar {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            margin: 20px 0;
-        }
-
-        .reaction-bar button {
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .reaction-bar button:hover {
-            background: var(--border);
-        }
-
-        .reaction-bar .liked {
-            color: #4CAF50;
-        }
-
-        .reaction-bar .disliked {
-            color: #ff4444;
-        }
-
-        /* ========== QUOTES ========== */
-        .quote-bar {
-            text-align: center;
-            padding: 15px;
-            background: var(--card);
-            border-radius: 12px;
-            margin: 20px 0;
-            font-style: italic;
-            border-left: 4px solid var(--accent);
-            border-right: 4px solid var(--accent);
-            min-height: 60px;
+        /* ============================================================
+           FLOATING ELEMENTS
+           ============================================================ */
+        .audio-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--bg-card);
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            transition: 0.3s;
+            box-shadow: 0 5px 30px var(--shadow-color);
         }
 
-        .quote-bar span {
-            color: var(--accent);
-            opacity: 0.8;
+        .audio-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px var(--accent-glow);
         }
 
-        /* ========== WORLD CUP TROPHY ========== */
+        .audio-control i {
+            font-size: 26px;
+            color: var(--accent-gold);
+        }
+
         .trophy {
             position: fixed;
             bottom: 30px;
             left: 30px;
             font-size: 40px;
-            animation: spin 8s linear infinite;
+            animation: spinTrophy 8s linear infinite;
             z-index: 50;
+            filter: drop-shadow(0 0 20px var(--accent-glow));
         }
 
-        @keyframes spin {
+        @keyframes spinTrophy {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* ========== BUG REPORT ========== */
-        .bug-report-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bug-report-modal.open {
-            display: flex;
-        }
-
-        .bug-report-content {
-            background: var(--card);
-            border: 2px solid var(--border);
-            border-radius: 25px;
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .bug-report-content textarea {
-            width: 100%;
-            height: 150px;
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            padding: 15px;
-            resize: vertical;
-            outline: none;
-            margin: 15px 0;
-        }
-
-        .bug-report-content textarea:focus {
-            border-color: var(--accent);
-        }
-
-        /* ========== CHAT ========== */
+        /* ============================================================
+           CHAT MODAL
+           ============================================================ */
         .chat-modal {
             display: none;
             position: fixed;
             bottom: 100px;
             right: 30px;
-            width: 350px;
+            width: 360px;
             height: 450px;
-            background: var(--card);
-            border: 2px solid var(--border);
+            background: var(--bg-card);
+            border: 2px solid var(--accent-gold);
             border-radius: 20px;
             z-index: 300;
             flex-direction: column;
             overflow: hidden;
+            box-shadow: 0 10px 50px var(--shadow-color);
         }
 
         .chat-modal.open {
             display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .chat-header {
             padding: 15px 20px;
-            background: var(--border);
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--accent-gold);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+        .chat-header span {
+            font-family: var(--font-heading);
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+        }
+
         .chat-header button {
             background: none;
             border: none;
-            color: var(--text);
+            color: var(--text-primary);
             font-size: 1.2rem;
             cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .chat-header button:hover {
+            color: var(--accent-gold);
         }
 
         .chat-messages {
             flex: 1;
             padding: 15px;
             overflow-y: auto;
+            background: var(--bg-primary);
         }
 
         .chat-message {
             margin-bottom: 10px;
-            padding: 8px 12px;
-            background: var(--bg);
+            padding: 10px 14px;
+            background: var(--bg-secondary);
             border-radius: 12px;
-            max-width: 80%;
+            max-width: 85%;
+            border-left: 2px solid var(--accent-gold);
         }
 
         .chat-message .sender {
             font-weight: bold;
-            color: var(--accent);
+            color: var(--accent-gold);
             font-size: 0.8rem;
+            font-family: var(--font-heading);
         }
 
         .chat-message .msg {
             margin-top: 4px;
+            color: var(--text-secondary);
+        }
+
+        .chat-message .time {
+            font-size: 0.6rem;
+            opacity: 0.3;
         }
 
         .chat-input {
             display: flex;
             padding: 10px;
             gap: 8px;
-            border-top: 1px solid var(--border);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
         }
 
         .chat-input input {
             flex: 1;
             padding: 10px 14px;
-            background: var(--bg);
-            border: 2px solid var(--border);
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
             border-radius: 10px;
-            color: var(--text);
+            color: var(--text-primary);
             outline: none;
+            font-family: var(--font-body);
+        }
+
+        .chat-input input:focus {
+            border-color: var(--accent-gold);
         }
 
         .chat-input button {
             padding: 10px 18px;
-            background: var(--accent);
-            color: var(--bg);
+            background: var(--accent-gold);
+            color: var(--bg-primary);
             border: none;
             border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.3s;
+            font-family: var(--font-heading);
         }
 
-        /* ========== RESPONSIVE ========== */
+        .chat-input button:hover {
+            transform: scale(1.05);
+        }
+
+        /* ============================================================
+           MODALS
+           ============================================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 2px solid var(--accent-gold);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            animation: modalPop 0.3s ease;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content h3 {
+            color: var(--accent-gold);
+            font-family: var(--font-heading);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            padding: 15px;
+            resize: vertical;
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+
+        .modal-content textarea:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .modal-content .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal-content .btn-group button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+        }
+
+        .modal-content .btn-cancel {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .modal-content .btn-submit {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+        }
+
+        .modal-content .btn-submit:hover {
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        /* Delete Account Modal */
+        .delete-box h3 {
+            color: #ff4444;
+        }
+
+        .delete-box .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+
+        .delete-box .btn-danger:hover {
+            background: #cc0000;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
         @media (max-width: 768px) {
+            .login-container {
+                padding: 35px 25px;
+            }
+
+            .login-container h1 {
+                font-size: 2rem;
+            }
+
             .book-page {
                 padding: 25px 20px;
             }
 
-            .book-page h2 {
-                font-size: 1.5rem;
+            .book-page .page-title {
+                font-size: 1.6rem;
             }
 
             .top-bar {
                 flex-wrap: wrap;
                 gap: 10px;
-                padding: 12px 15px;
+                padding: 10px 15px;
+            }
+
+            .top-actions {
+                flex-wrap: wrap;
             }
 
             .page-nav {
@@ -680,86 +994,51 @@
             }
 
             .chat-modal {
-                width: 90%;
-                right: 5%;
+                width: 95%;
+                right: 2.5%;
                 height: 400px;
             }
 
             .comment-box {
                 flex-wrap: wrap;
             }
+
+            .comment-box input {
+                min-width: 100%;
+            }
+
+            .audio-control {
+                width: 50px;
+                height: 50px;
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .trophy {
+                font-size: 30px;
+                bottom: 15px;
+                left: 15px;
+            }
+
+            .quote-bar {
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
         }
 
-        /* ========== DELETION OVERLAY ========== */
-        .delete-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
+        @media (max-width: 480px) {
+            .book-page {
+                padding: 18px 15px;
+            }
 
-        .delete-overlay.open {
-            display: flex;
-        }
+            .book-page .page-title {
+                font-size: 1.3rem;
+            }
 
-        .delete-box {
-            background: var(--card);
-            border: 2px solid #ff4444;
-            border-radius: 25px;
-            padding: 40px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-        }
-
-        .delete-box h3 {
-            color: #ff4444;
-            margin-bottom: 15px;
-        }
-
-        .delete-box .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-
-        .delete-box .btn-group button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .delete-box .btn-danger {
-            background: #ff4444;
-            color: white;
-        }
-
-        .delete-box .btn-safe {
-            background: var(--border);
-            color: var(--text);
-        }
-
-        .delete-box .btn-danger:hover {
-            transform: scale(1.05);
-        }
-
-        /* Delete Account specific */
-        .delete-account-btn {
-            color: #ff4444 !important;
-        }
-
-        .delete-account-btn:hover {
-            background: rgba(255, 68, 68, 0.1) !important;
+            .reaction-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -770,8 +1049,8 @@
 <!-- ============================================================ -->
 <div id="loginPage">
     <div class="login-container">
-        <h1>📖 Tylor's Library</h1>
-        <p>Your digital knowledge hub</p>
+        <h1>📖 Codex of Realms</h1>
+        <p class="subtitle">Enter the library of knowledge</p>
 
         <div class="profile-pic-upload" id="profileUpload">
             <img id="profilePreview" src="" style="display:none;">
@@ -779,10 +1058,10 @@
             <input type="file" accept="image/*" id="profileInput">
         </div>
 
-        <input type="text" class="login-input" id="loginUsername" placeholder="Choose a username..." maxlength="20">
+        <input type="text" class="login-input" id="loginUsername" placeholder="Enter your username..." maxlength="20">
         <input type="password" class="login-input" id="loginPassword" placeholder="Create a password..." minlength="4">
 
-        <button class="login-btn" id="loginBtn">📚 Enter Library</button>
+        <button class="login-btn" id="loginBtn">⚔️ Enter the Codex</button>
         <div class="login-error" id="loginError"></div>
     </div>
 </div>
@@ -795,7 +1074,7 @@
     <div class="top-bar">
         <div class="user-info">
             <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
-            <span class="username-display" id="userNameDisplay">User</span>
+            <span class="username-display" id="userNameDisplay">Scholar</span>
         </div>
 
         <div class="top-actions">
@@ -805,11 +1084,13 @@
             <div class="settings-dropdown">
                 <button id="settingsToggle"><i class="fas fa-cog"></i></button>
                 <div class="settings-menu" id="settingsMenu">
-                    <button data-theme="default">🌙 Dark Theme</button>
-                    <button data-theme="gold">✨ Gold Theme</button>
-                    <button data-theme="neon">💜 Neon Theme</button>
-                    <button data-theme="hacker">💚 Hacker Theme</button>
-                    <hr style="border-color:var(--border); margin:8px 15px;">
+                    <div class="menu-label">🎨 Themes</div>
+                    <button data-theme="default" class="theme-option"><span class="dot" style="background:#1a1a2e;"></span> Dark Theme</button>
+                    <button data-theme="gold" class="theme-option"><span class="dot" style="background:#d4af37;"></span> Gold Theme</button>
+                    <button data-theme="neon" class="theme-option"><span class="dot" style="background:#ff00ff;"></span> Neon Theme</button>
+                    <button data-theme="hacker" class="theme-option"><span class="dot" style="background:#00ff41;"></span> Green Hacker Theme</button>
+                    <hr>
+                    <div class="menu-label">⚙️ Account</div>
                     <button id="deleteAccountBtn" class="delete-account-btn"><i class="fas fa-trash"></i> Delete Account</button>
                 </div>
             </div>
@@ -817,16 +1098,19 @@
     </div>
 
     <!-- QUOTE BAR -->
-    <div class="quote-bar" id="quoteBar">
-        <span id="quoteText">"The only way to do great work is to love what you do." - Steve Jobs</span>
-    </div>
+    <div class="book-wrapper">
+        <div class="quote-bar" id="quoteBar">
+            <span class="quote-text" id="quoteText">"The only way to do great work is to love what you do."</span>
+            <span class="quote-author" id="quoteAuthor">— Steve Jobs</span>
+        </div>
 
-    <!-- BOOK CONTAINER -->
-    <div class="book-container">
+        <!-- BOOK PAGE CONTENT -->
         <div class="book-page" id="bookPageContent">
-            <h2 id="pageTitle">Welcome to Tylor's Library</h2>
-            <div class="content" id="pageContent">
-                <p>Start reading your notes here. Each chapter brings new knowledge.</p>
+            <h2 class="page-title" id="pageTitle">Welcome to the Codex</h2>
+            <div class="page-content" id="pageContent">
+                <p>Begin your journey through the realms of knowledge. Each page holds new wisdom.</p>
+                <img src="https://placehold.co/800x400/1a1208/c9a959?text=The+Codex+of+Realms" alt="Codex">
+                <p>The Codex of Realms is a living library where knowledge flows like the winds between sky-islands.</p>
             </div>
 
             <!-- Reactions -->
@@ -837,12 +1121,12 @@
 
             <!-- Comments -->
             <div class="comments-section">
-                <h4>💬 Comments</h4>
+                <h4>💬 Scroll of Comments</h4>
                 <div id="commentsContainer">
-                    <!-- Comments appear here -->
+                    <p style="opacity:0.4; font-style:italic;">No comments yet. Share your wisdom...</p>
                 </div>
                 <div class="comment-box">
-                    <input type="text" id="commentInput" placeholder="Write a comment...">
+                    <input type="text" id="commentInput" placeholder="Write your comment...">
                     <button id="commentBtn">Post</button>
                 </div>
             </div>
@@ -861,617 +1145,4 @@
         <i class="fas fa-volume-up" id="audioIcon"></i>
     </div>
     <audio id="bgAudio" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- TROPHY -->
-    <div class="trophy">🏆</div>
-
-    <!-- CHAT MODAL -->
-    <div class="chat-modal" id="chatModal">
-        <div class="chat-header">
-            <span>💬 Live Chat</span>
-            <button id="chatCloseBtn"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <!-- Chat messages -->
-        </div>
-        <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Type a message...">
-            <button id="chatSendBtn">Send</button>
-        </div>
-    </div>
-
-    <!-- BUG REPORT MODAL -->
-    <div class="bug-report-modal" id="bugModal">
-        <div class="bug-report-content">
-            <h3 style="color:var(--accent);"><i class="fas fa-bug"></i> Report a Bug</h3>
-            <p style="opacity:0.7; font-size:0.9rem;">Describe the issue you're experiencing...</p>
-            <textarea id="bugDescription" placeholder="What happened? Please be specific..."></textarea>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                <button onclick="closeBugModal()" style="padding:10px 20px; background:var(--border); border:none; border-radius:10px; color:var(--text); cursor:pointer;">Cancel</button>
-                <button onclick="submitBug()" style="padding:10px 20px; background:var(--accent); border:none; border-radius:10px; color:var(--bg); font-weight:bold; cursor:pointer;">Submit</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- DELETE ACCOUNT OVERLAY -->
-    <div class="delete-overlay" id="deleteOverlay">
-        <div class="delete-box">
-            <h3>⚠️ Are you sure?</h3>
-            <p style="margin:15px 0; opacity:0.8;">Do you really want to leave this amazing site?</p>
-            <div class="btn-group">
-                <button class="btn-danger" id="confirmDeleteBtn">Yes, Goodbye</button>
-                <button class="btn-safe" id="cancelDeleteBtn">No, Stay</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================================ -->
-<!-- JAVASCRIPT -->
-<!-- ============================================================ -->
-<script>
-    // ============================================================
-    // DATA STORAGE
-    // ============================================================
-    const DATA_KEY = 'tylor_library_data';
-
-    function getDefaultData() {
-        return {
-            users: [],
-            pages: [
-                {
-                    id: 1,
-                    title: 'Chapter 1: Introduction',
-                    content: '<p>Welcome to your digital library! This is where you\'ll store all your knowledge.</p><img src="https://placehold.co/600x300/2a1f0f/c9a959?text=Knowledge+is+Power" alt="Knowledge"><p>Start adding your notes and share them with the world.</p>'
-                },
-                {
-                    id: 2,
-                    title: 'Chapter 2: Getting Started',
-                    content: '<p>This is the second chapter. Add your own content here.</p><img src="https://placehold.co/600x300/2a1f0f/00ff41?text=Learn+Every+Day" alt="Learning"><p>Keep building your knowledge base.</p>'
-                }
-            ],
-            comments: {},
-            likes: {},
-            dislikes: {},
-            chatMessages: [],
-            bugReports: [],
-            currentPage: 1,
-            audioPlaying: true,
-            theme: 'default'
-        };
-    }
-
-    function loadData() {
-        const raw = localStorage.getItem(DATA_KEY);
-        if (!raw) {
-            const data = getDefaultData();
-            localStorage.setItem(DATA_KEY, JSON.stringify(data));
-            return data;
-        }
-        return JSON.parse(raw);
-    }
-
-    function saveData(data) {
-        localStorage.setItem(DATA_KEY, JSON.stringify(data));
-    }
-
-    // Session storage for current user
-    let currentUser = null;
-    let currentPageIndex = 0;
-
-    // ============================================================
-    // LOGIN SYSTEM
-    // ============================================================
-    const loginPage = document.getElementById('loginPage');
-    const bookPage = document.getElementById('bookPage');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginUsername = document.getElementById('loginUsername');
-    const loginPassword = document.getElementById('loginPassword');
-    const loginError = document.getElementById('loginError');
-    const profileInput = document.getElementById('profileInput');
-    const profilePreview = document.getElementById('profilePreview');
-    const profilePlaceholder = document.getElementById('profilePlaceholder');
-
-    let tempProfilePic = '';
-
-    profileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                tempProfilePic = ev.target.result;
-                profilePreview.src = ev.target.result;
-                profilePreview.style.display = 'block';
-                profilePlaceholder.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    loginBtn.addEventListener('click', function() {
-        const username = loginUsername.value.trim();
-        const password = loginPassword.value.trim();
-
-        if (!username || !password) {
-            loginError.textContent = 'Please fill in all fields.';
-            return;
-        }
-
-        if (username.length > 20) {
-            loginError.textContent = 'Username must be 20 characters or less.';
-            return;
-        }
-
-        if (password.length < 4) {
-            loginError.textContent = 'Password must be at least 4 characters.';
-            return;
-        }
-
-        const data = loadData();
-        let user = data.users.find(u => u.username === username);
-
-        if (user) {
-            // Existing user - check password
-            if (user.password !== password) {
-                loginError.textContent = 'Wrong password!';
-                return;
-            }
-        } else {
-            // New user - create account
-            const profilePic = tempProfilePic || 'https://placehold.co/100x100/2a1f0f/c9a959?text=' + username.charAt(0).toUpperCase();
-            user = {
-                username: username,
-                password: password,
-                profilePic: profilePic,
-                joinedAt: new Date().toISOString()
-            };
-            data.users.push(user);
-            saveData(data);
-        }
-
-        // Login successful
-        currentUser = user;
-        loginPage.style.display = 'none';
-        bookPage.style.display = 'block';
-
-        // Update UI
-        document.getElementById('userAvatar').src = user.profilePic;
-        document.getElementById('userNameDisplay').textContent = user.username;
-
-        // Load book
-        currentPageIndex = 0;
-        renderPage();
-        loadComments();
-        loadReactions();
-        loadChat();
-
-        // Start audio if it was playing
-        if (data.audioPlaying !== false) {
-            document.getElementById('bgAudio').play();
-        }
-    });
-
-    // Allow Enter key on login
-    loginUsername.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginBtn.click(); });
-    loginPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginBtn.click(); });
-
-    // ============================================================
-    // BOOK RENDERING
-    // ============================================================
-    function renderPage() {
-        const data = loadData();
-        const pages = data.pages;
-
-        if (pages.length === 0) {
-            document.getElementById('pageTitle').textContent = '📖 Empty Library';
-            document.getElementById('pageContent').innerHTML = '<p>No pages yet. Admin needs to add content.</p>';
-            document.getElementById('pageIndicator').textContent = 'Page 0 of 0';
-            document.getElementById('prevPageBtn').disabled = true;
-            document.getElementById('nextPageBtn').disabled = true;
-            return;
-        }
-
-        if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
-        if (currentPageIndex < 0) currentPageIndex = 0;
-
-        const page = pages[currentPageIndex];
-        document.getElementById('pageTitle').textContent = page.title;
-        document.getElementById('pageContent').innerHTML = page.content;
-        document.getElementById('pageIndicator').textContent = `Page ${currentPageIndex + 1} of ${pages.length}`;
-
-        document.getElementById('prevPageBtn').disabled = currentPageIndex === 0;
-        document.getElementById('nextPageBtn').disabled = currentPageIndex === pages.length - 1;
-
-        // Load comments for this page
-        loadComments();
-        loadReactions();
-    }
-
-    // Page navigation with book sound
-    function playPageTurnSound() {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        oscillator.frequency.value = 300;
-        oscillator.type = 'sawtooth';
-
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-
-        oscillator.start(audioCtx.currentTime);
-        oscillator.stop(audioCtx.currentTime + 0.15);
-
-        // Second part of book sound
-        setTimeout(() => {
-            const osc2 = audioCtx.createOscillator();
-            const gain2 = audioCtx.createGain();
-            osc2.connect(gain2);
-            gain2.connect(audioCtx.destination);
-            osc2.frequency.value = 250;
-            osc2.type = 'sawtooth';
-            gain2.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc2.start(audioCtx.currentTime);
-            osc2.stop(audioCtx.currentTime + 0.1);
-        }, 80);
-    }
-
-    document.getElementById('prevPageBtn').addEventListener('click', function() {
-        if (currentPageIndex > 0) {
-            currentPageIndex--;
-            playPageTurnSound();
-            renderPage();
-        }
-    });
-
-    document.getElementById('nextPageBtn').addEventListener('click', function() {
-        const data = loadData();
-        if (currentPageIndex < data.pages.length - 1) {
-            currentPageIndex++;
-            playPageTurnSound();
-            renderPage();
-        }
-    });
-
-    // ============================================================
-    // AUDIO CONTROL
-    // ============================================================
-    const bgAudio = document.getElementById('bgAudio');
-    const audioIcon = document.getElementById('audioIcon');
-    let audioPlaying = true;
-
-    document.getElementById('audioControl').addEventListener('click', function() {
-        if (audioPlaying) {
-            bgAudio.pause();
-            audioIcon.className = 'fas fa-volume-mute';
-            audioPlaying = false;
-        } else {
-            bgAudio.play().catch(() => {});
-            audioIcon.className = 'fas fa-volume-up';
-            audioPlaying = true;
-        }
-        const data = loadData();
-        data.audioPlaying = audioPlaying;
-        saveData(data);
-    });
-
-    // ============================================================
-    // THEMES
-    // ============================================================
-    document.querySelectorAll('[data-theme]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const theme = this.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', theme);
-            const data = loadData();
-            data.theme = theme;
-            saveData(data);
-            document.getElementById('settingsMenu').classList.remove('open');
-        });
-    });
-
-    // ============================================================
-    // SETTINGS DROPDOWN
-    // ============================================================
-    document.getElementById('settingsToggle').addEventListener('click', function(e) {
-        e.stopPropagation();
-        document.getElementById('settingsMenu').classList.toggle('open');
-    });
-
-    document.addEventListener('click', function() {
-        document.getElementById('settingsMenu').classList.remove('open');
-    });
-
-    // ============================================================
-    // COMMENTS
-    // ============================================================
-    function loadComments() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-        const comments = data.comments[pageId] || [];
-        const container = document.getElementById('commentsContainer');
-
-        if (comments.length === 0) {
-            container.innerHTML = '<p style="opacity:0.5; font-size:0.9rem;">No comments yet. Be the first!</p>';
-            return;
-        }
-
-        container.innerHTML = comments.map(c => `
-            <div class="comment-item">
-                <strong>${escapeHtml(c.username)}</strong>
-                <small>${new Date(c.timestamp).toLocaleString()}</small>
-                <p style="margin-top:4px;">${escapeHtml(c.text)}</p>
-            </div>
-        `).join('');
-    }
-
-    document.getElementById('commentBtn').addEventListener('click', function() {
-        const input = document.getElementById('commentInput');
-        const text = input.value.trim();
-
-        if (!text) return;
-        if (!currentUser) {
-            alert('Please login first.');
-            return;
-        }
-
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-
-        if (!data.comments[pageId]) data.comments[pageId] = [];
-
-        data.comments[pageId].push({
-            username: currentUser.username,
-            text: text,
-            timestamp: Date.now()
-        });
-
-        saveData(data);
-        input.value = '';
-        loadComments();
-    });
-
-    document.getElementById('commentInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('commentBtn').click();
-    });
-
-    // ============================================================
-    // LIKES / DISLIKES
-    // ============================================================
-    function loadReactions() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-
-        document.getElementById('likeCount').textContent = data.likes[pageId] || 0;
-        document.getElementById('dislikeCount').textContent = data.dislikes[pageId] || 0;
-    }
-
-    document.getElementById('likeBtn').addEventListener('click', function() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-        data.likes[pageId] = (data.likes[pageId] || 0) + 1;
-        saveData(data);
-        loadReactions();
-    });
-
-    document.getElementById('dislikeBtn').addEventListener('click', function() {
-        const data = loadData();
-        const pageId = data.pages[currentPageIndex]?.id || 1;
-        data.dislikes[pageId] = (data.dislikes[pageId] || 0) + 1;
-        saveData(data);
-        loadReactions();
-    });
-
-    // ============================================================
-    // CHAT
-    // ============================================================
-    const chatModal = document.getElementById('chatModal');
-
-    document.getElementById('chatToggleBtn').addEventListener('click', function() {
-        chatModal.classList.toggle('open');
-    });
-
-    document.getElementById('chatCloseBtn').addEventListener('click', function() {
-        chatModal.classList.remove('open');
-    });
-
-    function loadChat() {
-        const data = loadData();
-        const messages = data.chatMessages || [];
-        const container = document.getElementById('chatMessages');
-
-        if (messages.length === 0) {
-            container.innerHTML = '<p style="opacity:0.4; text-align:center; padding:20px;">No messages yet. Start the conversation!</p>';
-            return;
-        }
-
-        container.innerHTML = messages.slice(-50).map(m => `
-            <div class="chat-message">
-                <div class="sender">${escapeHtml(m.username)}</div>
-                <div class="msg">${escapeHtml(m.text)}</div>
-                <small style="opacity:0.4; font-size:0.65rem;">${new Date(m.timestamp).toLocaleTimeString()}</small>
-            </div>
-        `).join('');
-
-        container.scrollTop = container.scrollHeight;
-    }
-
-    document.getElementById('chatSendBtn').addEventListener('click', function() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-
-        if (!text) return;
-        if (!currentUser) {
-            alert('Please login first.');
-            return;
-        }
-
-        const data = loadData();
-        if (!data.chatMessages) data.chatMessages = [];
-
-        data.chatMessages.push({
-            username: currentUser.username,
-            text: text,
-            timestamp: Date.now()
-        });
-
-        saveData(data);
-        input.value = '';
-        loadChat();
-    });
-
-    document.getElementById('chatInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('chatSendBtn').click();
-    });
-
-    // ============================================================
-    // QUOTES (Anime & Inspirational)
-    // ============================================================
-    const quotes = [
-        { text: '"The only way to do great work is to love what you do."', author: 'Steve Jobs' },
-        { text: '"In the middle of difficulty lies opportunity."', author: 'Albert Einstein' },
-        { text: '"The greatest glory in living lies not in never falling, but in rising every time we fall."', author: 'Nelson Mandela' },
-        { text: '"The future belongs to those who believe in the beauty of their dreams."', author: 'Eleanor Roosevelt' },
-        { text: '"Believe you can and you\'re halfway there."', author: 'Theodore Roosevelt' },
-        { text: '"It does not matter how slowly you go as long as you do not stop."', author: 'Confucius' },
-        { text: '"The only impossible journey is the one you never begin."', author: 'Tony Robbins' },
-        { text: '"You are never too old to set another goal or to dream a new dream."', author: 'C.S. Lewis' },
-        { text: '"Knowledge is power. Information is liberating. Education is the premise of progress."', author: 'Kofi Annan' },
-        { text: '"The beautiful thing about learning is that nobody can take it away from you."', author: 'B.B. King' },
-        { text: '"The pen is mightier than the sword, but only if you know how to use it."', author: 'Edward Bulwer-Lytton' },
-        { text: '"Reading is to the mind what exercise is to the body."', author: 'Joseph Addison' },
-        // Anime quotes
-        { text: '"The world is not beautiful, therefore it is."', author: 'Kino\'s Journey' },
-        { text: '"In this world, wherever there is light, there are also shadows."', author: 'Naruto' },
-        { text: '"The only way to truly escape the mundane is to be constantly learning."', author: 'Attack on Titan' },
-        { text: '"Everything in this world is bound by the power of bonds."', author: 'One Piece' },
-        { text: '"A person\'s true nature is not determined by their lineage, but by their actions."', author: 'Naruto' },
-        { text: '"The world is full of suffering, but it is also full of overcoming it."', author: 'Fullmetal Alchemist' },
-        { text: '"You can\'t change the world without getting your hands dirty."', author: 'Gintama' },
-        { text: '"The only thing we can do is live in the present and keep moving forward."', author: 'Bleach' },
-        { text: '"Sometimes the only way to find the truth is to face the lies."', author: 'Death Note' },
-        { text: '"A lesson without pain is meaningless. That\'s because you cannot gain something without sacrificing something else."', author: 'Fullmetal Alchemist' }
-    ];
-
-    let quoteIndex = 0;
-
-    function updateQuote() {
-        const quote = quotes[quoteIndex % quotes.length];
-        document.getElementById('quoteText').textContent = `${quote.text} — ${quote.author}`;
-        quoteIndex++;
-    }
-
-    updateQuote();
-    setInterval(updateQuote, 600000); // 10 minutes
-
-    // ============================================================
-    // BUG REPORT
-    // ============================================================
-    document.getElementById('bugReportBtn').addEventListener('click', function() {
-        document.getElementById('bugModal').classList.add('open');
-    });
-
-    function closeBugModal() {
-        document.getElementById('bugModal').classList.remove('open');
-        document.getElementById('bugDescription').value = '';
-    }
-
-    function submitBug() {
-        const description = document.getElementById('bugDescription').value.trim();
-        if (!description) {
-            alert('Please describe the bug.');
-            return;
-        }
-
-        if (!currentUser) {
-            alert('Please login first.');
-            return;
-        }
-
-        const data = loadData();
-        if (!data.bugReports) data.bugReports = [];
-
-        data.bugReports.push({
-            username: currentUser.username,
-            description: description,
-            timestamp: Date.now(),
-            page: data.pages[currentPageIndex]?.title || 'Unknown'
-        });
-
-        saveData(data);
-        alert('✅ Bug reported! Thank you for helping improve Tylor\'s Library.');
-        closeBugModal();
-    }
-
-    // ============================================================
-    // DELETE ACCOUNT
-    // ============================================================
-    document.getElementById('deleteAccountBtn').addEventListener('click', function() {
-        document.getElementById('deleteOverlay').classList.add('open');
-        document.getElementById('settingsMenu').classList.remove('open');
-    });
-
-    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
-        document.getElementById('deleteOverlay').classList.remove('open');
-    });
-
-    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-        if (!currentUser) return;
-
-        const data = loadData();
-        data.users = data.users.filter(u => u.username !== currentUser.username);
-        saveData(data);
-
-        document.getElementById('deleteOverlay').classList.remove('open');
-        alert('👋 Goodbye friend! We\'ll miss you.');
-
-        // Logout
-        currentUser = null;
-        bookPage.style.display = 'none';
-        loginPage.style.display = 'flex';
-        loginUsername.value = '';
-        loginPassword.value = '';
-        document.getElementById('loginError').textContent = '';
-    });
-
-    // ============================================================
-    // UTILITY FUNCTIONS
-    // ============================================================
-    function escapeHtml(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
-    // ============================================================
-    // RESTORE THEME ON LOAD
-    // ============================================================
-    (function() {
-        const data = loadData();
-        if (data.theme && data.theme !== 'default') {
-            document.documentElement.setAttribute('data-theme', data.theme);
-        }
-    })();
-
-    console.log('📚 Tylor\'s Digital Library loaded successfully!');
-    console.log('👤 Admin: Login with any username/password to create account.');
-    console.log('🔧 For admin panel, use the separate admin.html file.');
-
-    // ============================================================
-    // AUTO-LOGIN FOR DEMO (remove in production)
-    // ============================================================
-    // Uncomment below for quick testing:
-    // setTimeout(() => {
-    //     loginUsername.value = 'DemoUser';
-    //     loginPassword.value = 'demo123';
-    //     loginBtn.click();
-    // }, 500);
-</script>
-</body>
-</html>
+        <source src="https://www.soundhelix

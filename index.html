@@ -1,796 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="gold">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Infinity White</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Chronicles of Echoes - Platform</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <!-- Google Fonts -->
+    <link href="https://googleapis.com" rel="stylesheet">
+
     <style>
-        /* ... (keep all the CSS from previous version) ... */
-        /* Copy all the CSS from the earlier version here */
-        /* I've shortened this for brevity, but keep all the styles */
+        /* Base configuration for themes styling */
+        :root {
+            --bg-color: #121214;
+            --panel-bg: #1a1a1e;
+            --border-color: #c5a880;
+            --text-main: #e2e8f0;
+            --accent-color: #d4af37;
+            --font-display: 'Cinzel', serif;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --border-color: #475569;
+            --text-main: #f8fafc;
+            --accent-color: #38bdf8;
+            --font-display: 'Inter', sans-serif;
+        }
+
+        [data-theme="gold"] {
+            --bg-color: #14110f;
+            --panel-bg: #1c1814;
+            --border-color: #c5a880;
+            --text-main: #f4eae1;
+            --accent-color: #d4af37;
+            --font-display: 'Cinzel', serif;
+        }
+
+        [data-theme="neon"] {
+            --bg-color: #0d0221;
+            --panel-bg: #241442;
+            --border-color: #ff007f;
+            --text-main: #e0e0ff;
+            --accent-color: #00ffff;
+            --font-display: 'Inter', sans-serif;
+        }
+
+        [data-theme="green-hacker"] {
+            --bg-color: #050505;
+            --panel-bg: #0d0d0d;
+            --border-color: #00ff00;
+            --text-main: #33ff33;
+            --accent-color: #00ff00;
+            --font-display: 'Fira Code', monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .display-font { font-family: var(--font-display); }
+        .theme-panel { background-color: var(--panel-bg); border-color: var(--border-color); }
+        .theme-border { border-color: var(--border-color); }
+        .theme-accent { color: var(--accent-color); }
+        .theme-accent-bg { background-color: var(--accent-color); }
+
+        /* Book layout specific shadows and blending */
+        .book-page-bg {
+            background: linear-gradient(to right, #fbf6ef 0%, #faeede 4%, #f5e6d3 8%, #f1dec5 50%, #f5e6d3 92%, #faeede 96%, #fbf6ef 100%);
+            color: #2d241e;
+        }
+        [data-theme="dark"] .book-page-bg, 
+        [data-theme="neon"] .book-page-bg, 
+        [data-theme="green-hacker"] .book-page-bg {
+            background: linear-gradient(to right, #181824 0%, #1e1e2f 50%, #181824 100%);
+            color: #e2e8f0;
+        }
+
+        /* Translucent image implementation */
+        .translucent-story-img {
+            mix-blend-mode: multiply;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+        [data-theme="dark"] .translucent-story-img,
+        [data-theme="neon"] .translucent-story-img,
+        [data-theme="green-hacker"] .translucent-story-img {
+            mix-blend-mode: screen;
+            opacity: 0.15;
+        }
+
+        /* Rotating animation for World Cup Trophy */
+        @keyframes rotateTrophy {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        .rotating-trophy {
+            animation: rotateTrophy 6s linear infinite;
+            transform-style: preserve-3d;
+        }
     </style>
 </head>
-<body>
+<body class="p-4 min-h-screen">
 
-<!-- ============================================================ -->
-<!-- LOGIN PAGE -->
-<!-- ============================================================ -->
-<div id="loginPage">
-    <div class="login-container">
-        <h1>📖 The Infinity White</h1>
-        <p class="subtitle">Enter the library of infinite knowledge</p>
-
-        <div class="profile-pic-upload" id="profileUpload">
-            <img id="profilePreview" src="" style="display:none;">
-            <span class="placeholder" id="profilePlaceholder">+</span>
-            <input type="file" accept="image/*" id="profileInput">
-        </div>
-
-        <input type="text" class="login-input" id="loginUsername" placeholder="Enter your username..." maxlength="20">
-        <input type="password" class="login-input" id="loginPassword" placeholder="Create a password..." minlength="6">
-
-        <button class="login-btn" id="loginBtn">⚔️ Enter The Infinity</button>
-        <div class="login-error" id="loginError"></div>
+    <!-- View Switcher Tabs (For demo purposes to view both layouts simultaneously) -->
+    <div class="flex justify-center space-x-4 mb-6 border-b pb-4 theme-border">
+        <button onclick="switchView('user-view')" id="tab-user-view" class="px-6 py-2 rounded-md font-bold bg-amber-600 text-white">User Web View</button>
+        <button onclick="switchView('admin-view')" id="tab-admin-view" class="px-6 py-2 rounded-md font-bold bg-zinc-800 text-zinc-400 hover:bg-zinc-700">Admin Dashboard View</button>
     </div>
-</div>
 
-<!-- ============================================================ -->
-<!-- BOOK PAGE -->
-<!-- ============================================================ -->
-<div id="bookPage">
-    <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="user-info">
-            <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
-            <span class="username-display" id="userNameDisplay">Scholar</span>
-        </div>
-
-        <div class="top-actions">
-            <button id="chatToggleBtn" title="Chat"><i class="fas fa-comments"></i></button>
-            <button id="bugReportBtn" title="Report Bug"><i class="fas fa-bug"></i></button>
-
-            <div class="settings-dropdown">
-                <button id="settingsToggle"><i class="fas fa-cog"></i></button>
-                <div class="settings-menu" id="settingsMenu">
-                    <div class="menu-label">🎨 Themes</div>
-                    <button data-theme="default" class="theme-option"><span class="dot" style="background:#1a1a2e;"></span> Dark Theme</button>
-                    <button data-theme="gold" class="theme-option"><span class="dot" style="background:#d4af37;"></span> Gold Theme</button>
-                    <button data-theme="neon" class="theme-option"><span class="dot" style="background:#ff00ff;"></span> Neon Theme</button>
-                    <button data-theme="hacker" class="theme-option"><span class="dot" style="background:#00ff41;"></span> Green Hacker Theme</button>
-                    <hr>
-                    <div class="menu-label">⚙️ Account</div>
-                    <button id="deleteAccountBtn" class="delete-account-btn"><i class="fas fa-trash"></i> Delete Account</button>
+    <!-- ========================================== -->
+    <!--          1. USER WEB VIEW SECTION          -->
+    <!-- ========================================== -->
+    <main id="user-view" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <!-- Left Sidebar / Navigation Settings Column -->
+        <div class="space-y-6">
+            <!-- User Status Frame Card -->
+            <div class="theme-panel border rounded-xl p-4 flex items-center justify-between relative shadow-lg">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-full border-2 theme-border overflow-hidden bg-zinc-800">
+                        <img id="user-avatar" src="https://unsplash.com" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <p class="text-xs text-zinc-400">Logged in as</p>
+                        <h4 id="user-display-name" class="font-bold theme-accent">AlexG</h4>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QUOTE BAR -->
-    <div class="book-wrapper">
-        <div class="quote-bar" id="quoteBar">
-            <span class="quote-text" id="quoteText">"The only way to do great work is to love what you do."</span>
-            <span class="quote-author" id="quoteAuthor">— Steve Jobs</span>
-        </div>
-
-        <!-- BOOK PAGE CONTENT -->
-        <div class="book-page" id="bookPageContent">
-            <h2 class="page-title" id="pageTitle">Welcome to The Infinity White</h2>
-            <div class="page-content" id="pageContent">
-                <p>Begin your journey through the infinite realms of knowledge. Each page holds eternal wisdom.</p>
-                <img src="https://placehold.co/800x400/1a1208/c9a959?text=The+Infinity+White" alt="Infinity White">
-                <p>The Infinity White is a living library where knowledge flows like the winds between sky-islands.</p>
-            </div>
-
-            <!-- LIVE NOTES – Supabase powered -->
-            <div class="live-notes-section" id="liveNotesSection">
-                <h4><i class="fas fa-pen-fancy"></i> Live Notes <span class="note-badge">real‑time</span></h4>
-                <div class="note-input-row">
-                    <input type="text" id="noteTitleInput" placeholder="Note title (optional)" maxlength="60">
-                    <textarea id="noteBodyInput" placeholder="Write your note…" rows="2" maxlength="500"></textarea>
-                    <button id="publishNoteBtn"><i class="fas fa-cloud-upload-alt"></i> Publish</button>
-                </div>
-                <div class="note-feed" id="noteFeed">
-                    <p style="opacity:0.4; font-style:italic; text-align:center;">📡 Waiting for notes…</p>
-                </div>
-            </div>
-
-            <!-- SOCIAL MEDIA BUTTONS -->
-            <div class="social-cover" id="socialButtons">
-                <a href="#" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="#" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                <a href="#" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
-            </div>
-
-            <!-- Reactions -->
-            <div class="reaction-bar">
-                <button id="likeBtn"><i class="fas fa-thumbs-up"></i> <span id="likeCount">0</span></button>
-                <button id="dislikeBtn"><i class="fas fa-thumbs-down"></i> <span id="dislikeCount">0</span></button>
-            </div>
-
-            <!-- Comments -->
-            <div class="comments-section">
-                <h4>💬 Scroll of Comments</h4>
-                <div id="commentsContainer">
-                    <p style="opacity:0.4; font-style:italic;">No comments yet. Share your wisdom...</p>
-                </div>
-                <div class="comment-box">
-                    <input type="text" id="commentInput" placeholder="Write your comment...">
-                    <button id="commentBtn">Post</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Page Navigation -->
-        <div class="page-nav">
-            <button id="prevPageBtn"><i class="fas fa-chevron-left"></i> Previous</button>
-            <span class="page-indicator" id="pageIndicator">Page 1 of 1</span>
-            <button id="nextPageBtn">Next <i class="fas fa-chevron-right"></i></button>
-        </div>
-    </div>
-
-    <!-- AUDIO CONTROL -->
-    <div class="audio-control" id="audioControl">
-        <i class="fas fa-volume-up" id="audioIcon"></i>
-    </div>
-    <audio id="bgAudio" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- TROPHY -->
-    <div class="trophy">🏆</div>
-
-    <!-- CHAT MODAL -->
-    <div class="chat-modal" id="chatModal">
-        <div class="chat-header">
-            <span>💬 Infinity Chat</span>
-            <button id="chatCloseBtn"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <p style="opacity:0.4; text-align:center; padding:20px;">No messages yet. Start the conversation!</p>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Type a message...">
-            <button id="chatSendBtn">Send</button>
-        </div>
-    </div>
-
-    <!-- BUG REPORT MODAL -->
-    <div class="modal-overlay" id="bugModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-bug"></i> Report a Bug</h3>
-            <p style="opacity:0.7; font-size:0.9rem; margin-bottom:15px;">Describe the issue you're experiencing...</p>
-            <textarea id="bugDescription" placeholder="What happened? Please be specific..."></textarea>
-            <div class="btn-group">
-                <button class="btn-cancel" onclick="closeBugModal()">Cancel</button>
-                <button class="btn-submit" onclick="submitBug()">Submit Report</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- DELETE ACCOUNT MODAL -->
-    <div class="modal-overlay" id="deleteModal">
-        <div class="modal-content delete-box">
-            <h3>⚠️ Are you sure?</h3>
-            <p style="margin:15px 0; opacity:0.8; font-size:1.1rem;">Do you really want to leave this amazing site?</p>
-            <div class="btn-group" style="justify-content:center;">
-                <button class="btn-danger" id="confirmDeleteBtn" style="padding:12px 35px;">Yes, Goodbye</button>
-                <button class="btn-cancel" id="cancelDeleteBtn" style="padding:12px 35px;">No, Stay</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============================================================ -->
-<!-- JAVASCRIPT - SUPABASE INTEGRATION -->
-<!-- ============================================================ -->
-<script>
-    // ============================================================
-    // SUPABASE CONFIG - REPLACE WITH YOUR OWN CREDENTIALS
-    // ============================================================
-    const supabaseUrl = 'https://your-project-id.supabase.co';  // ← CHANGE THIS
-    const supabaseKey = 'your-supabase-anon-key';              // ← CHANGE THIS
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-    // ============================================================
-    // DATA STORAGE (Fallback for offline)
-    // ============================================================
-    const DATA_KEY = 'infinity_white_data';
-
-    function getDefaultData() {
-        return {
-            pages: [
-                {
-                    id: 1,
-                    title: 'The Infinity White',
-                    content: `
-                        <p>Welcome to the <strong>Infinity White</strong> — a living library where infinite knowledge flows like the winds between sky-islands.</p>
-                        <img src="https://placehold.co/800x400/1a1208/c9a959?text=Infinity+White" alt="Infinity White">
-                        <p>Sky-Islands are vast territories suspended in the eternal mists, where ancient dragons once roamed and scholars now gather to preserve the wisdom of ages.</p>
-                        <p>The Infinity White may be the greatest collection of knowledge ever assembled. Every page turns like a whisper of wind through ancient halls.</p>
-                        <img src="https://placehold.co/800x400/1a1208/c9a959?text=Dragon+Scrolls" alt="Dragon Scrolls">
-                        <p>"After dragons, who dragon't in thawa for monte." — <em>Naruto</em></p>
-                        <p>Continue your journey through these pages. Each chapter reveals new truths hidden within the mists of time.</p>
-                    `
-                },
-                {
-                    id: 2,
-                    title: 'The Sky-Islands',
-                    content: `
-                        <p>The Sky-Islands are revered as the birthplace of wisdom. Those who study the ancient draughts that once connected the realms gain access to secrets long forgotten.</p>
-                        <img src="https://placehold.co/800x400/1a1208/5a3f1f?text=Floating+Sanctuaries" alt="Floating Sanctuaries">
-                        <p>Sky-Islands are beauty in the world, adorned with the essence of dragons. At the hour of twilight, the scannonatic sox of Sky-Islands echo through the canyons of time.</p>
-                        <p>The dragons, those ancient protectors, still watch over these lands. Their presence is felt in the whispers of the wind and the turning of pages.</p>
-                        <img src="https://placehold.co/800x400/1a1208/5a3f1f?text=Dragon+Guardians" alt="Dragon Guardians">
-                        <p>"Fier dragons, who dragon't in thawa for monte." — <em>Naruto</em></p>
-                    `
-                },
-                {
-                    id: 3,
-                    title: 'The Wisdom of Ages',
-                    content: `
-                        <p>Within these halls, scholars gather to debate the nature of existence. The mountains of knowledge rise high, and the depth of understanding knows no bounds.</p>
-                        <img src="https://placehold.co/800x400/1a1208/c9a959?text=The+Great+Library" alt="The Great Library">
-                        <p>For something that exists, the power in existence and the multitudes of the mountains/islands continue to reveal themselves to those who seek truth.</p>
-                        <p>The foundations of grace are built upon knowledge. Notes and ancient texts line the walls of this sanctuary, waiting for those brave enough to read.</p>
-                        <img src="https://placehold.co/800x400/1a1208/c9a959?text=Ancient+Scrolls" alt="Ancient Scrolls">
-                        <p>Continue your quest for knowledge. The Infinity White holds many more secrets within its pages.</p>
-                    `
-                }
-            ],
-            theme: 'default',
-            audioPlaying: true
-        };
-    }
-
-    function loadLocalData() {
-        const raw = localStorage.getItem(DATA_KEY);
-        if (!raw) {
-            const data = getDefaultData();
-            localStorage.setItem(DATA_KEY, JSON.stringify(data));
-            return data;
-        }
-        return JSON.parse(raw);
-    }
-
-    function saveLocalData(data) {
-        localStorage.setItem(DATA_KEY, JSON.stringify(data));
-    }
-
-    // ============================================================
-    // SESSION
-    // ============================================================
-    let currentUser = null;
-    let currentPageIndex = 0;
-    let currentUserProfilePic = '';
-
-    // ============================================================
-    // LOGIN SYSTEM (Supabase)
-    // ============================================================
-    const loginPage = document.getElementById('loginPage');
-    const bookPage = document.getElementById('bookPage');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginUsername = document.getElementById('loginUsername');
-    const loginPassword = document.getElementById('loginPassword');
-    const loginError = document.getElementById('loginError');
-    const profileInput = document.getElementById('profileInput');
-    const profilePreview = document.getElementById('profilePreview');
-    const profilePlaceholder = document.getElementById('profilePlaceholder');
-
-    let tempProfilePic = '';
-
-    profileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                tempProfilePic = ev.target.result;
-                profilePreview.src = ev.target.result;
-                profilePreview.style.display = 'block';
-                profilePlaceholder.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    loginBtn.addEventListener('click', async function() {
-        const username = loginUsername.value.trim();
-        const password = loginPassword.value.trim();
-
-        if (!username || !password) {
-            loginError.textContent = 'Please fill in all fields.';
-            return;
-        }
-
-        if (username.length > 20) {
-            loginError.textContent = 'Username must be 20 characters or less.';
-            return;
-        }
-
-        if (password.length < 6) {
-            loginError.textContent = 'Password must be at least 6 characters.';
-            return;
-        }
-
-        try {
-            // Check if user exists in Supabase
-            const { data: existingUsers, error: queryError } = await supabase
-                .from('users')
-                .select('*')
-                .eq('username', username);
-
-            if (queryError) throw queryError;
-
-            let userData = null;
-
-            if (existingUsers && existingUsers.length > 0) {
-                // User exists - verify password
-                userData = existingUsers[0];
-                if (userData.password !== password) {
-                    loginError.textContent = 'Wrong password!';
-                    return;
-                }
-            } else {
-                // Create new user
-                const profilePic = tempProfilePic || `https://placehold.co/100x100/1a1208/c9a959?text=${username.charAt(0).toUpperCase()}`;
                 
-                const { data: newUser, error: insertError } = await supabase
-                    .from('users')
-                    .insert([{
-                        username: username,
-                        password: password,
-                        profile_pic: profilePic
-                    }])
-                    .select()
-                    .single();
-
-                if (insertError) throw insertError;
-                userData = newUser;
-            }
-
-            currentUser = {
-                username: userData.username,
-                profilePic: userData.profile_pic
-            };
-            currentUserProfilePic = userData.profile_pic;
-
-            // Enter the book
-            loginPage.style.display = 'none';
-            bookPage.style.display = 'block';
-
-            document.getElementById('userAvatar').src = userData.profile_pic;
-            document.getElementById('userNameDisplay').textContent = username;
-
-            currentPageIndex = 0;
-            renderPage();
-            loadComments();
-            loadReactions();
-            loadChat();
-            subscribeToNotes();
-            loadNotes();
-
-            const localData = loadLocalData();
-            if (localData.audioPlaying !== false) {
-                document.getElementById('bgAudio').play();
-            }
-
-        } catch (error) {
-            console.error('Login error:', error);
-            loginError.textContent = 'Error connecting to server. Please try again.';
-        }
-    });
-
-    // ============================================================
-    // BOOK RENDERING
-    // ============================================================
-    function renderPage() {
-        const data = loadLocalData();
-        const pages = data.pages;
-
-        if (pages.length === 0) {
-            document.getElementById('pageTitle').textContent = '📖 Empty Infinity';
-            document.getElementById('pageContent').innerHTML = '<p>No pages yet. The Admin is preparing the scrolls...</p>';
-            document.getElementById('pageIndicator').textContent = 'Page 0 of 0';
-            document.getElementById('prevPageBtn').disabled = true;
-            document.getElementById('nextPageBtn').disabled = true;
-            return;
-        }
-
-        if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
-        if (currentPageIndex < 0) currentPageIndex = 0;
-
-        const page = pages[currentPageIndex];
-        document.getElementById('pageTitle').textContent = page.title;
-        document.getElementById('pageContent').innerHTML = page.content;
-        document.getElementById('pageIndicator').textContent = `Page ${currentPageIndex + 1} of ${pages.length}`;
-
-        document.getElementById('prevPageBtn').disabled = currentPageIndex === 0;
-        document.getElementById('nextPageBtn').disabled = currentPageIndex === pages.length - 1;
-
-        const socialBtns = document.getElementById('socialButtons');
-        if (currentPageIndex === 0) {
-            socialBtns.style.display = 'flex';
-        } else {
-            socialBtns.style.display = 'none';
-        }
-
-        loadComments();
-        loadReactions();
-    }
-
-    function playPageTurnSound() {
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.frequency.value = 300;
-            oscillator.type = 'sawtooth';
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.15);
-            setTimeout(() => {
-                const osc2 = audioCtx.createOscillator();
-                const gain2 = audioCtx.createGain();
-                osc2.connect(gain2);
-                gain2.connect(audioCtx.destination);
-                osc2.frequency.value = 250;
-                osc2.type = 'sawtooth';
-                gain2.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-                osc2.start(audioCtx.currentTime);
-                osc2.stop(audioCtx.currentTime + 0.1);
-            }, 80);
-        } catch (e) {}
-    }
-
-    document.getElementById('prevPageBtn').addEventListener('click', function() {
-        if (currentPageIndex > 0) {
-            currentPageIndex--;
-            playPageTurnSound();
-            renderPage();
-        }
-    });
-
-    document.getElementById('nextPageBtn').addEventListener('click', function() {
-        const data = loadLocalData();
-        if (currentPageIndex < data.pages.length - 1) {
-            currentPageIndex++;
-            playPageTurnSound();
-            renderPage();
-        }
-    });
-
-    // ============================================================
-    // AUDIO CONTROL
-    // ============================================================
-    const bgAudio = document.getElementById('bgAudio');
-    const audioIcon = document.getElementById('audioIcon');
-    let audioPlaying = true;
-
-    document.getElementById('audioControl').addEventListener('click', function() {
-        if (audioPlaying) {
-            bgAudio.pause();
-            audioIcon.className = 'fas fa-volume-mute';
-            audioPlaying = false;
-        } else {
-            bgAudio.play().catch(() => {});
-            audioIcon.className = 'fas fa-volume-up';
-            audioPlaying = true;
-        }
-        const data = loadLocalData();
-        data.audioPlaying = audioPlaying;
-        saveLocalData(data);
-    });
-
-    // ============================================================
-    // THEMES
-    // ============================================================
-    document.querySelectorAll('[data-theme]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const theme = this.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', theme);
-            const data = loadLocalData();
-            data.theme = theme;
-            saveLocalData(data);
-            document.getElementById('settingsMenu').classList.remove('open');
-        });
-    });
-
-    document.getElementById('settingsToggle').addEventListener('click', function(e) {
-        e.stopPropagation();
-        document.getElementById('settingsMenu').classList.toggle('open');
-    });
-
-    document.addEventListener('click', function() {
-        document.getElementById('settingsMenu').classList.remove('open');
-    });
-
-    // ============================================================
-    // COMMENTS (Supabase)
-    // ============================================================
-    async function loadComments() {
-        try {
-            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
-            const { data: comments, error } = await supabase
-                .from('comments')
-                .select('*')
-                .eq('page_id', pageId)
-                .order('created_at', { ascending: false })
-                .limit(50);
-
-            if (error) throw error;
-
-            const container = document.getElementById('commentsContainer');
-
-            if (!comments || comments.length === 0) {
-                container.innerHTML = '<p style="opacity:0.4; font-style:italic;">No comments yet. Share your wisdom...</p>';
-                return;
-            }
-
-            container.innerHTML = comments.map(c => `
-                <div class="comment-item">
-                    <span class="comment-user">${escapeHtml(c.username)}</span>
-                    <span class="comment-time">${new Date(c.created_at).toLocaleString()}</span>
-                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                <!-- Dropdown Settings Button -->
+                <div class="relative">
+                    <button onclick="toggleDropdown('settings-dropdown')" class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 theme-accent">
+                        <i class="fa-solid fa-cog"></i>
+                    </button>
+                    <!-- Settings & Theme Dropdown Menu -->
+                    <div id="settings-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-lg shadow-xl theme-panel border p-3 z-50 text-sm">
+                        <p class="font-bold mb-2 pb-1 border-b theme-border text-xs tracking-wider uppercase text-zinc-400">Select Theme</p>
+                        <div class="space-y-1 mb-3">
+                            <label class="flex items-center space-x-2 p-1.5 rounded hover:bg-zinc-800 cursor-pointer">
+                                <input type="radio" name="theme-opt" onclick="changeTheme('dark')"> <span>Dark Theme</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-1.5 rounded hover:bg-zinc-800 cursor-pointer">
+                                <input type="radio" name="theme-opt" checked onclick="changeTheme('gold')"> <span>Gold Theme</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-1.5 rounded hover:bg-zinc-800 cursor-pointer">
+                                <input type="radio" name="theme-opt" onclick="changeTheme('neon')"> <span>Neon Theme</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-1.5 rounded hover:bg-zinc-800 cursor-pointer">
+                                <input type="radio" name="theme-opt" onclick="changeTheme('green-hacker')"> <span>Green Hacker</span>
+                            </label>
+                        </div>
+                        <div class="border-t theme-border pt-2 space-y-1">
+                            <button onclick="openBugReportModal()" class="w-full text-left p-1.5 rounded hover:bg-zinc-800 text-emerald-400 flex items-center space-x-2">
+                                <i class="fa-solid fa-bug"></i> <span>Report Bug</span>
+                            </button>
+                            <button onclick="triggerDeleteAccount()" class="w-full text-left p-1.5 rounded hover:bg-zinc-800 text-red-400 flex items-center space-x-2">
+                                <i class="fa-solid fa-trash-can"></i> <span>Delete Account</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            `).join('');
-        } catch (error) {
-            console.warn('Error loading comments:', error);
-        }
-    }
-
-    document.getElementById('commentBtn').addEventListener('click', async function() {
-        const input = document.getElementById('commentInput');
-        const text = input.value.trim();
-
-        if (!text) return;
-        if (!currentUser) {
-            alert('Please login first.');
-            return;
-        }
-
-        try {
-            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
-            const { error } = await supabase
-                .from('comments')
-                .insert([{
-                    username: currentUser.username,
-                    text: text,
-                    page_id: pageId
-                }]);
-
-            if (error) throw error;
-
-            input.value = '';
-            loadComments();
-        } catch (error) {
-            console.error('Error posting comment:', error);
-            alert('Failed to post comment. Please try again.');
-        }
-    });
-
-    document.getElementById('commentInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('commentBtn').click();
-    });
-
-    // ============================================================
-    // LIKES / DISLIKES (Supabase)
-    // ============================================================
-    async function loadReactions() {
-        try {
-            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
-            const { data: reactions, error } = await supabase
-                .from('reactions')
-                .select('*')
-                .eq('page_id', pageId);
-
-            if (error) throw error;
-
-            let likes = 0, dislikes = 0;
-            if (reactions) {
-                reactions.forEach(r => {
-                    if (r.type === 'like') likes++;
-                    if (r.type === 'dislike') dislikes++;
-                });
-            }
-
-            document.getElementById('likeCount').textContent = likes;
-            document.getElementById('dislikeCount').textContent = dislikes;
-        } catch (error) {
-            console.warn('Error loading reactions:', error);
-        }
-    }
-
-    document.getElementById('likeBtn').addEventListener('click', async function() {
-        if (!currentUser) {
-            alert('Please login first.');
-            return;
-        }
-        try {
-            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
-            const { error } = await supabase
-                .from('reactions')
-                .insert([{
-                    username: currentUser.username,
-                    type: 'like',
-                    page_id: pageId
-                }]);
-
-            if (error) throw error;
-            loadReactions();
-        } catch (error) {
-            console.error('Error liking:', error);
-        }
-    });
-
-    document.getElementById('dislikeBtn').addEventListener('click', async function() {
-        if (!currentUser) {
-            alert('Please login first.');
-            return;
-        }
-        try {
-            const pageId = loadLocalData().pages[currentPageIndex]?.id || 1;
-            const { error } = await supabase
-                .from('reactions')
-                .insert([{
-                    username: currentUser.username,
-                    type: 'dislike',
-                    page_id: pageId
-                }]);
-
-            if (error) throw error;
-            loadReactions();
-        } catch (error) {
-            console.error('Error disliking:', error);
-        }
-    });
-
-    // ============================================================
-    // CHAT (Supabase)
-    // ============================================================
-    const chatModal = document.getElementById('chatModal');
-
-    document.getElementById('chatToggleBtn').addEventListener('click', function() {
-        chatModal.classList.toggle('open');
-    });
-
-    document.getElementById('chatCloseBtn').addEventListener('click', function() {
-        chatModal.classList.remove('open');
-    });
-
-    async function loadChat() {
-        try {
-            const { data: messages, error } = await supabase
-                .from('chat_messages')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(50);
-
-            if (error) throw error;
-
-            const container = document.getElementById('chatMessages');
-
-            if (!messages || messages.length === 0) {
-                container.innerHTML = '<p style="opacity:0.4; text-align:center; padding:20px;">No messages yet. Start the conversation!</p>';
-                return;
-            }
-
-            // Reverse to show newest at bottom
-            const sortedMessages = [...messages].reverse();
-
-            container.innerHTML = sortedMessages.map(m => `
-                <div class="chat-message">
-                    <div class="sender">${escapeHtml(m.username)}</div>
-                    <div class="msg">${escapeHtml(m.text)}</div>
-                    <span class="time">${new Date(m.created_at).toLocaleTimeString()}</span>
-                </div>
-            `).join('');
-
-            container.scrollTop = container.scrollHeight;
-        } catch (error) {
-            console.warn('Error loading chat:', error);
-        }
-    }
-
-    document.getElementById('chatSendBtn').addEventListener('click', async function() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-
-        if (!text) return;
-        if (!currentUser) {
-            alert('Please login first.');
-            return;
-        }
-
-        try {
-            const { error } = await supabase
-                .from('chat_messages')
-                .insert([{
-                    username: currentUser.username,
-                    text: text
-                }]);
-
-            if (error) throw error;
-            input.value = '';
-            loadChat();
-        } catch (error) {
-            console.error('Error sending chat:', error);
-        }
-    });
-
-    document.getElementById('chatInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') document.getElementById('chatSendBtn').click();
-    });
-
-    // ============================================================
-    // LIVE NOTES (Supabase with Realtime)
-    // ============================================================
-    let notesSubscription = null;
-
-    async function loadNotes() {
-        try {
-            const { data: notes, error } = await supabase
-                .from('notes')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(50);
-
-            if (error) throw error;
-            renderNoteFeed(notes || []);
-        } catch (error) {
-            console.warn('Error loading notes:', error);
-        }
-    }
-
-    function renderNoteFeed(notes) {
-        const feed = document.getElementById('noteFeed');
-        if (!notes || notes.length === 0) {
-            feed.innerHTML = '<p style="opacity:0.4; font-style:italic; text-align:center;">📡 No notes yet. Be the first!</p>';
-            return;
-        }
-
-        feed.innerHTML = notes.map(n => `
-            <div class="note-item">
-                <div class="note-meta"><strong>${escapeHtml(n.username || 'Anonymous')}</strong> <span>${new Date(n.created_at).toLocaleString()}</span></div>
-                ${n.title ? `<div style="font-weight:bold; color:var(--accent-gold);">${escapeHtml(n.title)}</div>` : ''}
-                <div class="note-body">${escapeHtml(n.body)}</div>
             </div>
-        `).join('');
-    }
 
-    function subscribeToNotes() {
-        // Unsubscribe from previous subscription
-        if (notesSubscription) {
-            notesSubscription.unsubscribe();
-        }
+            <!-- Rotating Trophy Display -->
+            <div class="theme-panel border rounded-xl p-6 text-center flex flex-col items-center shadow-lg">
+                <p class="text-xs uppercase text-zinc-400 tracking-widest mb-4">Milestone Progress</p>
+                <div class="w-24 h-24 flex items-center justify-center bg-zinc-900/50 rounded-full border theme-border mb-2 p-2">
+                    <img src="https://flaticon.com" alt="World Cup Trophy" class="w-16 h-16 rotating-trophy object-contain">
+                </div>
+                <span class="text-xs font-semibold theme-accent">Global Edition active</span>
+            </div>
+        </div>
 
-        // Subscribe to real-time changes
-        notesSubscription = supabase
-            .channel('notes-channel')
-            .on(
-                'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'notes' },
-                (payload) => {
-                    // Add new note to the feed
-                    const feed = document.getElementById('noteFeed');
-                    const newNote = payload.new;
-                    
-                    // Remove empty placeholder if present
-                    if (feed.children.length === 1 && feed.children[0].tagName === 'P') {
-                        feed.innerHTML = '';
-                    }
-                    
-                    const item = document.createElement('div');
-                    item.className = 'note-item';
-                    item.innerHTML = `
-                        <div class="note-meta"><strong>${escapeHtml(newNote.username || 'Anonymous')}</strong> <span>${new Date(newNote.created_at).toLocaleString()}</span></div>
-                        ${newNote.title ? `<div style="font-weight:bold; color:var(--accent-gold);">${escapeHtml(newNote.title)}</div>` : ''}
-                        <div class="note-body">${escapeHtml(newNote.body)}
+        <!-- Main Book Module Container -->
+        <div class="lg:col-span-2 space-y-4">
+            
+            <!-- Book Framework -->
+            <div class="theme-panel border-4 rounded-2xl overflow-hidden relative shadow-2xl transition-all duration-300">
+                
+                <!-- Audio Controls Strip -->
+                <div class="bg-black/40 backdrop-blur-sm p-3 border-b theme-border flex justify-between items-center px-4">
+                    <span class="text-xs text-zinc-300 tracking-wider flex items-center space-x-2">
+                        <i class="fa-solid fa-music text-emerald-400 animate-pulse"></i>
+                        <span>Chapter Background Score Playing</span>
+                    </span>
+                    <button onclick="toggleAudio()" id="btn-audio" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 font-bold rounded flex items-center space-x-1 transition">
+                        <i class="fa-solid fa-volume-xmark"></i> <span>Stop Music</span>
